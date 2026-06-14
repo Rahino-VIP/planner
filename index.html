@@ -373,28 +373,31 @@
                     redirect: "follow"
                 });
                 
+                // ... (کدهای قبلی درون triggerAIGeneration) ...
                 const aiData = await aiResponse.json();
                 
                 if(aiData.status !== "Success") throw new Error(aiData.message);
 
                 let generatedSchedule = aiData.result.schedule;
                 let aiMessage = aiData.result.aiMessage;
+                let summary = aiData.result.generalSummary; // 👈 گرفتن توضیح کلی
                 let weekName = getWeekName();
                 
                 loader.innerText = "در حال ذخیره در دیتابیس... 💾";
 
-                // ذخیره برنامه تولید شده توسط جمینای در سوپابیس
+                // ذخیره در سوپابیس (فیلد ai_feedback را ترکیب می‌کنیم یا در فیلد جدید می‌ریزیم)
                 await dbRequest('weekly_schedules', 'POST', [{
                     student_id: currentUser.id, 
                     week_name: weekName, 
                     student_reflection: reflection,
-                    ai_feedback: aiMessage, 
+                    ai_feedback: JSON.stringify({ msg: aiMessage, sum: summary }), // 👈 ذخیره هر دو متن
                     schedule_json: generatedSchedule, 
                     status: 'تکمیل شده'
                 }]);
 
                 document.getElementById("scheduleTitle").innerText = weekName;
-                renderTimeline(generatedSchedule, aiMessage);
+                renderTimeline(generatedSchedule, aiMessage, summary); // 👈 پاس دادن به رندر
+// ... (بقیه کدها) ...
 
             } catch(e) { 
                 alert("خطا در پردازش هوشمند: " + e.message); 
@@ -403,10 +406,30 @@
             btn.disabled = false; loader.style.display = "none";
             loader.innerText = "هسته هوشمند در حال پردازش هزاران حالت... 🧠"; // ریست کردن متن
         }
-        function renderTimeline(schedule) {
-            let container = document.getElementById('timelineContainer');
-            container.innerHTML = ""; let totalMins = 0;
+        // اضافه کردن آرگومان summary به ورودی تابع
+function renderTimeline(schedule, aiMessage = "", summary = "") {
+    let container = document.getElementById('timelineContainer');
+    container.innerHTML = ""; let totalMins = 0;
 
+    // باکس پیام کوتاه
+    if(aiMessage) {
+        container.innerHTML += `
+        <div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; line-height:1.8;">
+            <strong style="color:#b5740a;">پیام مشاور هوشمند تو:</strong><br>
+            <span style="font-size:14px; font-weight:bold; color:var(--text-dark);">${aiMessage}</span>
+        </div>`;
+    }
+
+    // باکس تحلیل و استراتژی کلی هفته
+    if(summary) {
+        container.innerHTML += `
+        <div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; line-height:1.8;">
+            <strong style="color:#1c5b82;">📊 استراتژی کلی این هفته:</strong><br>
+            <span style="font-size:13px; font-weight:bold; color:var(--text-dark);">${summary}</span>
+        </div>`;
+    }
+
+    // ... (ادامه کدهای رندر کردن schedule که دست نمی‌خورد) ...
             schedule.forEach((day, i) => {
                 let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`;
                 day.forEach(b => {
