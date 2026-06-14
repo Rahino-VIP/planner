@@ -60,8 +60,8 @@
         // ==========================================
         // ۱. اتصال مستقیم به سوپابیس (Supabase)
         // ==========================================
-        const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co'; // <--- آدرس خودت را اینجا بذار
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5...'; // <--- کلید anon خودت را اینجا بذار
+        const SUPABASE_URL = 'https://sb_publishable_N9fmFzk2F5KOD83IYJ7iFQ_ldMsqM5q.supabase.co'; // <--- آدرس خودت را اینجا بذار
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // <--- کلید anon خودت را اینجا بذار
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
