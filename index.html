@@ -210,16 +210,45 @@
         // 1. ورود و احراز هویت
         // ==========================================
         async function handleLogin() {
-            let id = document.getElementById("userId").value; let pass = document.getElementById("userPass").value;
-            document.getElementById("loginBtn").disabled = true; document.getElementById("loginLoader").style.display = "block";
-            let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
-            if(users.length > 0 && users[0].password === pass) {
-                currentUser = users[0]; document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
-                document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; showScreen('homeMenu');
-            } else alert("اطلاعات اشتباه است.");
-            document.getElementById("loginBtn").disabled = false; document.getElementById("loginLoader").style.display = "none";
-        }
+    // ۱. استفاده از trim برای حذف فاصله‌های تصادفی
+    let id = document.getElementById("userId").value.trim(); 
+    let pass = document.getElementById("userPass").value.trim();
+    
+    if(!id || !pass) {
+        return alert("لطفاً آیدی و رمز عبور را وارد کنید.");
+    }
 
+    document.getElementById("loginBtn").disabled = true; 
+    document.getElementById("loginLoader").style.display = "block";
+    
+    try {
+        // دریافت اطلاعات از سوپابیس
+        let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
+        
+        // 💡 این خط رو گذاشتم تا تو کنسول مرورگرت ببینی دیتابیس چی برگردونده
+        console.log("جواب دیتابیس: ", users);
+
+        if (users && users.length > 0) {
+            // کاربر پیدا شد، حالا چِک کردن رمز عبور
+            if (users[0].password === pass) {
+                currentUser = users[0]; 
+                document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
+                document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; 
+                showScreen('homeMenu');
+            } else {
+                alert("رمز عبور اشتباه است.");
+            }
+        } else {
+            // کاربر پیدا نشد (یا دیتابیس قفل است)
+            alert("آیدی یافت نشد! اگر مطمئنی آیدی درسته، پس قفل امنیتی دیتابیس (RLS) روشنه.");
+        }
+    } catch(err) {
+        alert("خطا در ارتباط با سرور!");
+    }
+    
+    document.getElementById("loginBtn").disabled = false; 
+    document.getElementById("loginLoader").style.display = "none";
+}
         // ==========================================
         // 2. منطق برنامه‌ریز و هوش مصنوعی
         // ==========================================
