@@ -5,150 +5,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قطب‌نمای هوشمند VIP</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* (همان استایل‌های قبلی) */
-        :root { --pink: #d97b7b; --pink-light: #fbecec; --pink-dark: #b85c5c; --green: #7ca881; --green-light: #e5eee6; --yellow: #fca311; --blue: #4ea8de; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); }
+        :root { --pink: #d97b7b; --pink-dark: #b85c5c; --pink-light: #fbecec; --green: #7ca881; --green-light: #e5eee6; --yellow: #fca311; --blue: #4ea8de; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); }
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; background-image: radial-gradient(var(--green-light) 2px, transparent 2px); background-size: 25px 25px; }
         .container { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; width: 100%; max-width: 550px; box-shadow: var(--shadow); border: 2px solid var(--white); display: none; margin-bottom: 20px; animation: fadeIn 0.4s ease-in-out;}
         .active-screen { display: block !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .logo-box { text-align: center; margin-bottom: 15px; font-size: 55px; line-height: 1;}
         h1 { text-align: center; font-size: 24px; margin-bottom: 5px; color: var(--text-dark); font-weight: 900;}
         .subtitle { text-align: center; color: var(--green); font-size: 14px; margin-bottom: 25px; font-weight: bold;}
         .section-title { color: var(--white); background: var(--pink); padding: 8px 15px; border-radius: 12px; font-size: 14px; margin: 25px 0 15px 0; display: inline-block; font-weight: bold; }
+        
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: bold; }
-        input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--green-light); background: #fafbfc; font-size: 15px; font-weight: bold; transition: 0.3s; outline: none;}
-        input:focus, textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 4px var(--pink-light); }
+        input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--green-light); background: #fafbfc; font-size: 15px; font-weight: bold; outline: none; transition: 0.3s;}
+        input:focus, textarea:focus, select:focus { border-color: var(--pink); box-shadow: 0 0 0 4px var(--pink-light); }
+        
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn:active { transform: scale(0.96); }
         .btn-primary { background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: var(--white); box-shadow: 0 6px 20px rgba(217, 123, 123, 0.4); }
         .btn-outline { background: var(--white); color: var(--text-dark); border: 2px dashed #ccc; }
+        .btn-danger { background: #ffeded; color: #d9534f; padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid #fadcdc; font-weight: bold;}
+        
         .menu-card { background: var(--white); border: 2px solid var(--green-light); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
         .menu-card:hover { border-color: var(--pink); transform: translateY(-3px); }
         .menu-icon { font-size: 35px; display: block; }
-        
-        .time-slider-box { background: #fdfdfd; border: 2px solid var(--green-light); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-        .time-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
-        .time-badge { background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
+
+        /* استایل‌های زمان و اسلایدرها */
+        .time-slider-box, .slider-frame { background: #fdfdfd; border: 2px solid var(--green-light); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .time-header, .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
+        .time-badge, .val-badge { background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
         input[type="range"] { width: 100%; -webkit-appearance: none; background: transparent; }
-        input[type="range"]:focus { outline: none; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #e0e8e1; border-radius: 10px; }
         input[type="range"]::-webkit-slider-thumb { border: 3px solid var(--white); height: 24px; width: 24px; border-radius: 50%; background: var(--pink); cursor: pointer; -webkit-appearance: none; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* ارزیابی دروس */
         .eval-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #eee; }
-        .eval-subj-name { font-weight: 900; font-size: 14px; color: var(--text-dark); }
         .btn-group { display: flex; gap: 5px; background: #f0f0f0; padding: 4px; border-radius: 12px;}
         .btn-eval { border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; background: transparent; color: #666; transition: 0.2s;}
-        .btn-eval.active[data-val="weak"] { background: #ffeded; color: #d9534f; box-shadow: 0 2px 5px rgba(217,83,79,0.2);}
-        .btn-eval.active[data-val="normal"] { background: var(--white); color: var(--text-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-        .btn-eval.active[data-val="strong"] { background: var(--green-light); color: var(--green); box-shadow: 0 2px 5px rgba(124,168,129,0.2);}
+        .btn-eval.active[data-val="weak"] { background: #ffeded; color: #d9534f;}
+        .btn-eval.active[data-val="normal"] { background: var(--white); color: var(--text-dark);}
+        .btn-eval.active[data-val="strong"] { background: var(--green-light); color: var(--green);}
+
+        /* کلاس‌های ثابت */
         .days-wrapper { display: flex; justify-content: space-between; margin-bottom: 15px; direction: rtl;}
-        .day-circle { width: 38px; height: 38px; border-radius: 50%; background: #f0f0f0; color: #666; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 2px solid transparent;}
-        .day-circle.selected { background: var(--pink); color: var(--white); transform: scale(1.1); box-shadow: 0 4px 10px rgba(217,123,123,0.3);}
+        .day-circle { width: 38px; height: 38px; border-radius: 50%; background: #f0f0f0; color: #666; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer;}
+        .day-circle.selected { background: var(--pink); color: var(--white); transform: scale(1.1);}
         .fixed-class-box { background: var(--white); border: 2px solid var(--blue); padding: 15px; border-radius: 16px; margin-bottom: 15px; position: relative;}
+        
+        /* تقویم */
         .schedule-day { background: var(--white); border: 2px solid var(--blue); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
         .s-day-header { background: #e3f2fd; color: #1c5b82; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between;}
         .s-block { display: flex; align-items: stretch; border-bottom: 1px solid #f0f0f0; }
         .s-time { width: 95px; background: #fcfcfc; padding: 15px 5px; text-align: center; font-size: 13px; font-weight: bold; color: #555; border-left: 2px solid #eee; display: flex; flex-direction: column; justify-content: center;}
         .s-content { flex: 1; padding: 15px; }
-        .s-title { font-weight: 900; font-size: 15px; margin-bottom: 4px;}
-        .s-details { font-size: 12px; font-weight: bold; opacity: 0.8;}
-        .bg-specific { background-color: var(--pink-light); color: var(--pink-dark); border-right: 4px solid var(--pink); }
+        .bg-specific { background-color: #fbecec; color: #b85c5c; border-right: 4px solid var(--pink); }
         .bg-general { background-color: #fffdf5; color: #b5740a; border-right: 4px solid var(--yellow); }
         .bg-fixed { background-color: #f8f9fa; color: #444; border-right: 4px solid #adb5bd; }
-        .bg-break { background-color: var(--green-light); color: var(--green); border-right: 4px solid var(--green); padding: 10px 15px !important; display: flex; align-items: center;}
+        .bg-break { background-color: var(--green-light); color: var(--green); border-right: 4px solid var(--green); padding: 10px 15px !important;}
+        
+        /* مود دکمه‌های لایف استایل */
+        .mood-container { display: flex; justify-content: space-between; gap: 10px; }
+        .mood-btn { flex: 1; padding: 15px 5px; border-radius: 16px; background: #fafbfc; border: 2px solid var(--green-light); cursor: pointer; text-align: center; }
+        .mood-btn.active { border-color: var(--pink); background: var(--pink-light); transform: translateY(-3px); }
+        
+        .course-box { background: #fdfdfd; border: 2px solid var(--green-light); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
         .loader { text-align: center; color: var(--pink); font-weight: bold; font-size: 14px; margin-top: 10px; display: none;}
     </style>
 </head>
 <body>
 
+    <!-- 1. ورود -->
     <div class="container active-screen" id="loginScreen">
-        <div class="logo-box">🧭</div>
-        <h1>قطب‌نمای راهینو</h1><p class="subtitle">سیستم مدیریت یادگیری هوشمند</p>
+        <div class="logo-box">🧭</div><h1>قطب‌نمای راهینو</h1><p class="subtitle">سیستم مدیریت یادگیری هوشمند</p>
         <div class="input-group"><label>آیدی عددی:</label><input type="text" id="userId" placeholder="مثال: 12345" style="direction: ltr;"></div>
         <div class="input-group"><label>رمز عبور:</label><input type="password" id="userPass" placeholder="••••" style="direction: ltr;"></div>
         <button class="btn btn-primary" onclick="handleLogin()" id="loginBtn">تایید و ورود</button>
-        <div id="loginLoader" class="loader">در حال بررسی اطلاعات... ⏳</div>
+        <div id="loginLoader" class="loader">در حال بررسی... ⏳</div>
     </div>
 
+    <!-- 2. منوی اصلی -->
     <div class="container" id="homeMenu">
-        <div class="logo-box">🏠</div>
-        <h1 id="userNameDisplay">خوش آمدی</h1><p class="subtitle" id="userGradeDisplay" style="margin-bottom: 25px;"></p>
-        <div class="menu-card" onclick="initPlannerSequence()" style="border-color: var(--blue); background: #f0f8ff;">
-            <span class="menu-icon">🎯</span>
-            <h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color: #666; font-size:13px;">تقویم اختصاصی هفته شما</p>
-        </div>
-        <div class="menu-card"><span class="menu-icon">📝</span><h3>ثبت گزارش روزانه</h3></div>
+        <div class="logo-box">🏠</div><h1 id="userNameDisplay">خوش آمدی</h1><p class="subtitle" id="userGradeDisplay" style="margin-bottom: 25px;"></p>
+        <div class="menu-card" onclick="initPlannerSequence()" style="border-color: var(--blue); background: #f0f8ff;"><span class="menu-icon">🎯</span><h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color:#666; font-size:12px;">تقویم اختصاصی</p></div>
+        <div class="menu-card" onclick="openDateScreen()"><span class="menu-icon">📝</span><h3>ثبت گزارش روزانه</h3><p style="color:#666; font-size:12px;">لایف‌استایل و تیک دروس</p></div>
+        <div class="menu-card" onclick="alert('بخش کارنامه پس از انتقال کامل دیتا به سوپابیس در آپدیت بعدی فعال می‌شود.')"><span class="menu-icon">📊</span><h3>روند پیشرفت من</h3><p style="color:#666; font-size:12px;">نمودارها و تحلیل</p></div>
     </div>
 
+    <!-- 3. فرم تنظیمات (آنبوردینگ) -->
     <div class="container" id="onboardingScreen">
-        <div class="logo-box">⚙️</div>
-        <h1>تنظیمات موتور برنامه‌ریز</h1>
-        <p class="subtitle">فقط یک‌بار برای همیشه تنظیم کنید</p>
-
-        <span class="section-title">🏫 کلاس‌های ثابت شما</span>
-        <div id="fixedClassesContainer"></div>
-        <button class="btn btn-outline" onclick="addFixedClassUI()">➕ افزودن کلاس جدید</button>
-
-        <span class="section-title">🎯 ارزیابی سطح دروس</span>
-        <div id="subjectsEvalContainer" style="background:#fff; border:2px solid #eee; border-radius:16px; padding:10px;"></div>
-
+        <div class="logo-box">⚙️</div><h1>تنظیمات موتور برنامه‌ریز</h1>
+        <span class="section-title">🏫 کلاس‌های ثابت شما</span><div id="fixedClassesContainer"></div><button class="btn btn-outline" onclick="addFixedClassUI()">➕ کلاس جدید</button>
+        <span class="section-title">🎯 ارزیابی سطح دروس</span><div id="subjectsEvalContainer" style="background:#fff; border:2px solid #eee; border-radius:16px; padding:10px;"></div>
         <span class="section-title">🍽️ تنظیمات استراحت‌های اصلی</span>
-        <div class="time-slider-box">
-            <div class="time-header"><label>ناهار (۱ ساعت)</label><span class="time-badge" id="badgeLunch">13:30</span></div>
-            <input type="range" id="sliderLunch" min="11" max="16" step="0.5" value="13.5" oninput="updateSliderBadge(this, 'badgeLunch')">
-        </div>
-        <div class="time-slider-box">
-            <div class="time-header"><label>شام (نیم ساعت)</label><span class="time-badge" id="badgeDinner">20:30</span></div>
-            <input type="range" id="sliderDinner" min="18" max="23" step="0.5" value="20.5" oninput="updateSliderBadge(this, 'badgeDinner')">
-        </div>
-
+        <div class="time-slider-box"><div class="time-header"><label>ناهار (۱ ساعت)</label><span class="time-badge" id="badgeLunch">13:30</span></div><input type="range" id="sliderLunch" min="11" max="16" step="0.5" value="13.5" oninput="updateSliderBadge(this, 'badgeLunch')"></div>
+        <div class="time-slider-box"><div class="time-header"><label>شام (نیم ساعت)</label><span class="time-badge" id="badgeDinner">20:30</span></div><input type="range" id="sliderDinner" min="18" max="23" step="0.5" value="20.5" oninput="updateSliderBadge(this, 'badgeDinner')"></div>
         <button class="btn btn-primary" id="btnSaveOnboarding" onclick="saveOnboardingData()">ذخیره تنظیمات 🚀</button>
-        <div id="onboardingLoader" class="loader">در حال ذخیره در دیتابیس... ⏳</div>
+        <div id="onboardingLoader" class="loader">در حال ذخیره... ⏳</div>
     </div>
 
+    <!-- 4. اتاق فکر هوشمند (جمعه‌ها) -->
     <div class="container" id="fridayReflectionScreen">
-        <div class="logo-box">🤖</div>
-        <h1 style="color:var(--pink);">اتاق فکر هوشمند</h1>
-        <p class="subtitle" id="weekNameDisplay"></p>
-        <div class="input-group">
-            <label>اتفاق خاصی در برنامه این هفته داری؟</label>
-            <textarea id="aiPromptText" rows="5" placeholder="مثلاً: دوشنبه امتحان شیمی دارم. پنجشنبه مسافرتیم..."></textarea>
-        </div>
-        <button class="btn btn-primary" id="btnGenerateAI" onclick="triggerAIGeneration()">تولید جادویی تقویم ⏳</button>
-        <div id="aiLoader" class="loader">هسته هوشمند در حال پردازش هزاران حالت... 🧠</div>
+        <div class="logo-box">🤖</div><h1 style="color:var(--pink);">اتاق فکر هوشمند</h1>
+        <div class="input-group"><label>درخواست خاصی برای این هفته داری؟</label><textarea id="aiPromptText" rows="5"></textarea></div>
+        <button class="btn btn-primary" id="btnGenerateAI" onclick="triggerAIGeneration()">ارسال به موتور هوش مصنوعی ⏳</button>
+        <div id="aiLoader" class="loader">هسته هوشمند در حال تولید برنامه... 🧠</div>
     </div>
 
+    <!-- 5. صفحه انتظار تایید -->
     <div class="container" id="pendingApprovalScreen">
-        <div class="logo-box" style="font-size: 70px;">⏳</div>
-        <h1 style="color:var(--blue);">برنامه در صف بررسی</h1>
-        <p class="subtitle" style="margin-top:10px; line-height:1.8;">
-            هوش مصنوعی برنامه شما را با موفقیت چید! <br> 
-            اما این برنامه برای <strong>بررسی، اصلاح و تایید نهایی</strong> برای مشاور شما ارسال شده است.
-        </p>
-        <div style="background:#e3f2fd; padding:15px; border-radius:15px; text-align:center; font-weight:bold; color:#1c5b82; margin-bottom:20px;">
-            به محض تایید مشاور، تقویم شما همینجا نمایش داده می‌شود.
-        </div>
+        <div class="logo-box" style="font-size: 70px;">⏳</div><h1 style="color:var(--blue);">برنامه در صف بررسی</h1>
+        <p class="subtitle" style="margin-top:10px; line-height:1.8;">هوش مصنوعی تقویم را چید! <br> اما برای بررسی، اصلاح و تایید برای مشاور ارسال شده است.</p>
         <button class="btn btn-outline" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
     </div>
 
-    <div class="container" id="scheduleScreen" style="max-width: 600px;">
-        <h1 id="scheduleTitle" style="margin-bottom: 5px; color:var(--text-dark);"></h1>
-        <p class="subtitle" id="scheduleStats"></p>
-        <div id="timelineContainer"></div>
-        <button class="btn btn-primary" style="background:var(--text-dark); margin-top: 20px;" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
+    <!-- 6. نمایش تقویم نهایی -->
+    <div class="container" id="scheduleScreen">
+        <h1 id="scheduleTitle"></h1><div id="timelineContainer"></div>
+        <button class="btn btn-primary" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
+    </div>
+
+    <!-- 7. انتخاب روز برای گزارش -->
+    <div class="container" id="dateScreen">
+        <div class="logo-box">🗓️</div><h1>انتخاب روز گزارش</h1>
+        <div class="input-group"><select id="dateSelect" size="7" style="height: auto; padding: 10px;"></select></div>
+        <button class="btn btn-primary" onclick="checkDate()" id="dateBtn">ورود به فرم</button>
+        <button class="btn btn-outline" onclick="showScreen('homeMenu')" style="border:none;">❌ انصراف</button>
+    </div>
+
+    <!-- 8. فرم ثبت گزارش شبانه (با لایف‌استایل) -->
+    <div class="container" id="dashboard">
+        <h1 style="font-size: 20px;">ثبت گزارش</h1><p id="dashDateText" class="subtitle" style="color:var(--pink);"></p>
+        <div class="section-title">📚 درسی</div>
+        <div id="courseContainer"></div>
+        <button class="btn btn-outline" onclick="addCourseRow()">➕ اضافه کردن درس دیگر</button>
+        
+        <div class="section-title">🌿 لایف‌استایل</div>
+        <div class="slider-frame"><div class="slider-header"><label>خواب دیشب</label><span class="val-badge" id="v_sleepLast">23:00</span></div><input type="range" id="life_sleepLast" min="21" max="27" step="0.5" value="23" oninput="updateTimeLabel(this.value, 'v_sleepLast')"></div>
+        <div class="slider-frame"><div class="slider-header"><label>بیداری امروز</label><span class="val-badge" id="v_wakeToday">07:00</span></div><input type="range" id="life_wakeToday" min="4" max="12" step="0.5" value="7" oninput="updateTimeLabel(this.value, 'v_wakeToday')"></div>
+        <div class="slider-frame"><div class="slider-header"><label>گوشی</label><span class="val-badge" id="v_phone">1.5 ساعت</span></div><input type="range" id="life_phone" min="0" max="4" step="0.5" value="1.5" oninput="document.getElementById('v_phone').innerText = this.value + (this.value==4?'+':'') + ' ساعت'"></div>
+        
+        <div class="input-group" style="margin-top:20px;">
+            <label>وضعیت روحی:</label>
+            <div class="mood-container">
+                <div class="mood-btn" onclick="setMood(this, 'عالی')"><span>🤩</span><br><small>عالی</small></div>
+                <div class="mood-btn active" onclick="setMood(this, 'خوب')"><span>😊</span><br><small>خوب</small></div>
+                <div class="mood-btn" onclick="setMood(this, 'معمولی')"><span>🙂</span><br><small>معمولی</small></div>
+                <div class="mood-btn" onclick="setMood(this, 'بد')"><span>😞</span><br><small>بد</small></div>
+            </div>
+            <input type="hidden" id="life_mood" value="خوب">
+        </div>
+        
+        <button class="btn btn-primary" id="submitReportBtn" onclick="submitDailyReport()">🚀 ثبت نهایی در هسته</button>
+        <button class="btn btn-outline" style="border:none;" onclick="showScreen('homeMenu')">❌ انصراف</button>
+    </div>
+
+    <!-- 9. پیام موفقیت گزارش -->
+    <div class="container" id="successScreen">
+        <div class="logo-box"><span style="font-size: 80px;">🏆</span></div><h2 style="text-align:center;">گزارش با موفقیت ثبت شد</h2>
+        <button class="btn btn-outline" style="margin-top:30px;" onclick="showScreen('homeMenu')">بازگشت به خانه</button>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://sb_publishable_N9fmFzk2F5KOD83IYJ7iFQ_ldMsqM5q.supabase.co'; // 👈 کلید سوپابیس
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // 👈 کلید سوپابیس
-        const NEW_GAS_AI_URL = 'https://script.google.com/macros/s/AKfycbz_BoUQde5Jj3s5wlygk9QiKPmpEWxeeohwlEmFapkjTrMYJWeb1ac2fNMybnSv6dFO/exec'; // 👈 لینک اسکریپت جدید گوگل برای هوش مصنوعی
+        // ==========================================
+        // تنظیمات و پیکربندی سوپابیس
+        // ==========================================
+        const SUPABASE_URL = 'https://sb_publishable_N9fmFzk2F5KOD83IYJ7iFQ_ldMsqM5q.supabase.co'; // 👈 لینک سوپابیس شما
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // 👈 کلید سوپابیس شما
+        const NEW_GAS_AI_URL = 'https://script.google.com/macros/s/AKfycbz_BoUQde5Jj3s5wlygk9QiKPmpEWxeeohwlEmFapkjTrMYJWeb1ac2fNMybnSv6dFO/exec'; // 👈 لینک اسکریپت جدید جمینای
 
-        let currentUser = null; let userSubjectEvals = {}; 
+        let currentUser = null; let userSubjectEvals = {}; let courseCount = 0; let selectedDate = "";
         const daysOfWeek = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
-        const generalSubjects = ["فارسی", "عربی", "دینی", "زبان", "فارسی 1", "عربی 1", "دینی 1", "زبان 1", "فارسی 2", "عربی 2", "دینی 2", "زبان 2", "فارسی 3", "عربی 3", "دینی 3", "زبان 3", "سلامت و بهداشت", "هویت اجتماعی"];
         
         const syllabusRef = { 
             "دهم": { "ریاضی": ["هندسه 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "تجربی": ["زیست 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "انسانی": ["ریاضی و آمار ۱", "اقتصاد", "علوم و فنون ۱", "عربی انسانی ۱", "تاریخ ۱", "جامعه‌شناسی ۱", "منطق", "فارسی ۱", "دینی ۱", "زبان ۱"] }, 
@@ -156,10 +187,7 @@
             "دوازدهم": { "ریاضی": ["حسابان 2", "ریاضیات پایه", "هندسه 3", "گسسته", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "تجربی": ["ریاضی 3", "زیست 3", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "انسانی": ["علوم و فنون ۳", "ریاضی و آمار ۳", "عربی انسانی ۳", "تاریخ ۳", "جامعه‌شناسی ۳", "جغرافیا ۳", "فلسفه ۲", "فارسی 3", "دینی 3", "زبان 3"] } 
         };
 
-        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
-        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
-        function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`; }
-
+        // توابع کمکی
         async function dbRequest(endpoint, method = 'GET', body = null) {
             const options = { method: method, headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }};
             if(body) options.body = JSON.stringify(body);
@@ -167,201 +195,133 @@
         }
 
         function showScreen(id) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0,0); }
-
+        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
+        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
+        function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`; }
+        function updateTimeLabel(val, labelId) { let h = Math.floor(val); let m = (val - h) * 60; if(h>=24) h-=24; document.getElementById(labelId).innerText = (h<10?'0'+h:h) + ':' + (m===0?'00':'30'); }
+        function setMood(elem, val) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); elem.classList.add('active'); document.getElementById("life_mood").value = val; }
+        
         function getWeekName() {
             let d = new Date(); let diff = (d.getDay() + 1) % 7; d.setDate(d.getDate() - diff - 1);
-            let shamsi = new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d);
-            return `برنامه هفته (از ${shamsi})`;
+            return `برنامه هفته (از ${new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d)})`;
         }
 
+        // ==========================================
+        // 1. ورود و احراز هویت
+        // ==========================================
         async function handleLogin() {
-            let id = document.getElementById("userId").value.trim(); let pass = document.getElementById("userPass").value.trim();
-            if(!id || !pass) return alert("اطلاعات را وارد کنید.");
+            let id = document.getElementById("userId").value; let pass = document.getElementById("userPass").value;
             document.getElementById("loginBtn").disabled = true; document.getElementById("loginLoader").style.display = "block";
             let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
-            if(users && users.length > 0 && users[0].password === pass) {
-                currentUser = users[0];
-                document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
-                document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`;
-                showScreen('homeMenu');
-            } else { alert("رمز عبور یا آیدی اشتباه است."); }
+            if(users.length > 0 && users[0].password === pass) {
+                currentUser = users[0]; document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
+                document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; showScreen('homeMenu');
+            } else alert("اطلاعات اشتباه است.");
             document.getElementById("loginBtn").disabled = false; document.getElementById("loginLoader").style.display = "none";
         }
 
-        // =========================================================
-        // 🌟 آپدیت مهم: بررسی وضعیت تایید مشاور
-        // =========================================================
+        // ==========================================
+        // 2. منطق برنامه‌ریز و هوش مصنوعی
+        // ==========================================
         async function initPlannerSequence() {
             let weekName = getWeekName();
             let schedules = await dbRequest(`weekly_schedules?student_id=eq.${currentUser.id}&week_name=eq.${encodeURIComponent(weekName)}&select=*`);
-            
             if(schedules && schedules.length > 0) {
-                let currentSch = schedules[0];
-                if(currentSch.status === 'در انتظار') {
-                    showScreen('pendingApprovalScreen'); // اگر تایید نشده بود
-                    return;
-                } else if (currentSch.status === 'تایید شده' && currentSch.schedule_json) {
+                if(schedules[0].status === 'در انتظار') return showScreen('pendingApprovalScreen');
+                if(schedules[0].status === 'تایید شده') {
                     document.getElementById("scheduleTitle").innerText = weekName;
-                    
-                    // استخراج پیام‌های هوش مصنوعی (اگر به صورت آبجکت ذخیره شده باشد)
-                    let aiMsg = "", summary = "";
-                    try {
-                        let parsedFeed = JSON.parse(currentSch.ai_feedback);
-                        aiMsg = parsedFeed.msg || ""; summary = parsedFeed.sum || "";
-                    } catch(e) { aiMsg = currentSch.ai_feedback; } // حالت قدیمی
-                    
-                    renderTimeline(currentSch.schedule_json, aiMsg, summary);
-                    return;
+                    let parsedFeed = JSON.parse(schedules[0].ai_feedback || "{}");
+                    return renderTimeline(schedules[0].schedule_json, parsedFeed.msg, parsedFeed.sum);
                 }
             }
-
             let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`);
-            if(evals && evals.length > 0) {
-                document.getElementById("weekNameDisplay").innerText = weekName;
-                showScreen('fridayReflectionScreen');
-            } else {
-                buildOnboardingUI();
-                showScreen('onboardingScreen');
-            }
+            if(evals && evals.length > 0) { document.getElementById("weekNameDisplay").innerText = weekName; showScreen('fridayReflectionScreen'); } 
+            else { buildOnboardingUI(); showScreen('onboardingScreen'); }
         }
 
         function buildOnboardingUI() {
-            let subjects = syllabusRef[currentUser.grade][currentUser.major] || ["عمومی"];
-            let container = document.getElementById('subjectsEvalContainer');
-            container.innerHTML = ""; userSubjectEvals = {};
-            subjects.forEach(subj => {
-                userSubjectEvals[subj] = "normal";
-                container.innerHTML += `<div class="eval-row"><span class="eval-subj-name">${subj}</span><div class="btn-group">
-                    <button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button>
-                    <button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button>
-                    <button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button>
-                </div></div>`;
-            });
+            let subjects = syllabusRef[currentUser.grade][currentUser.major] || ["عمومی"]; let container = document.getElementById('subjectsEvalContainer'); container.innerHTML = ""; userSubjectEvals = {};
+            subjects.forEach(subj => { userSubjectEvals[subj] = "normal"; container.innerHTML += `<div class="eval-row"><span class="eval-subj-name">${subj}</span><div class="btn-group"><button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button><button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button><button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button></div></div>`; });
         }
-
-        function setEval(btn) {
-            let subj = btn.getAttribute('data-subj'); let val = btn.getAttribute('data-val'); userSubjectEvals[subj] = val;
-            let group = btn.parentElement; group.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-        }
-
+        function setEval(btn) { let subj = btn.getAttribute('data-subj'); userSubjectEvals[subj] = btn.getAttribute('data-val'); btn.parentElement.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
         function addFixedClassUI() {
-            let id = Date.now();
-            let html = `<div class="fixed-class-box" id="fc_${id}"><button class="remove-btn" onclick="document.getElementById('fc_${id}').remove()" style="position:absolute;top:10px;left:10px;background:#ffeded;color:#d9534f;border:none;padding:5px 10px;border-radius:8px;">حذف</button>
-                <div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس (مثلاً کلاس فیزیک)"></div>
-                <div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <span style="font-size:12px; font-weight:bold;">از</span>
-                    <div style="flex:1;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge" style="text-align:center;">16:00</div></div>
-                    <span style="font-size:12px; font-weight:bold;">تا</span>
-                    <div style="flex:1;"><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge" style="text-align:center; background:var(--pink-light); color:var(--pink);">18:00</div></div>
-                </div></div>`;
-            document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', html);
+            let id = Date.now(); document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', `<div class="fixed-class-box" id="fc_${id}"><button class="btn-danger" onclick="document.getElementById('fc_${id}').remove()" style="position:absolute;top:10px;left:10px;padding:5px 10px;">حذف</button><div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس"></div><div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div><div style="display:flex; gap:10px;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge">16:00</div><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge">18:00</div></div></div>`);
         }
 
         async function saveOnboardingData() {
-            let btn = document.getElementById("btnSaveOnboarding"); document.getElementById("onboardingLoader").style.display = "block"; btn.disabled = true;
+            document.getElementById("btnSaveOnboarding").disabled = true; document.getElementById("onboardingLoader").style.display = "block";
             let lunch = formatSliderTime(document.getElementById('sliderLunch').value); let dinner = formatSliderTime(document.getElementById('sliderDinner').value);
-            currentUser.lunch_time = lunch; currentUser.dinner_time = dinner;
-            await dbRequest(`students?id=eq.${currentUser.id}`, 'PATCH', { lunch_time: lunch, dinner_time: dinner });
-            
-            let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] }));
-            await dbRequest('subject_evaluations', 'POST', evalsPayload);
-
-            let classes = [];
-            document.querySelectorAll('.fixed-class-box').forEach(box => {
-                let name = box.querySelector('.fc-name').value;
-                let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val')));
-                let start = formatSliderTime(box.querySelector('.fc-start-s').value); let end = formatSliderTime(box.querySelector('.fc-end-s').value);
-                if(name && days.length > 0) classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: start, end_time: end });
-            });
+            await dbRequest(`students?id=eq.${currentUser.id}`, 'PATCH', { lunch_time: lunch, dinner_time: dinner }); currentUser.lunch_time = lunch; currentUser.dinner_time = dinner;
+            let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] })); await dbRequest('subject_evaluations', 'POST', evalsPayload);
+            let classes = []; document.querySelectorAll('.fixed-class-box').forEach(box => { let name = box.querySelector('.fc-name').value; let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val'))); if(name && days.length > 0) classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: formatSliderTime(box.querySelector('.fc-start-s').value), end_time: formatSliderTime(box.querySelector('.fc-end-s').value) }); });
             if(classes.length > 0) await dbRequest('fixed_classes', 'POST', classes);
-
-            document.getElementById("weekNameDisplay").innerText = getWeekName();
-            showScreen('fridayReflectionScreen');
-            btn.disabled = false; document.getElementById("onboardingLoader").style.display = "none";
+            showScreen('fridayReflectionScreen'); document.getElementById("btnSaveOnboarding").disabled = false; document.getElementById("onboardingLoader").style.display = "none";
         }
 
-        // =========================================================
-        // 🌟 آپدیت: درخواست از جمینای و ارسال به داشبورد ادمین
-        // =========================================================
         async function triggerAIGeneration() {
-            let btn = document.getElementById("btnGenerateAI"); let loader = document.getElementById("aiLoader");
-            btn.disabled = true; loader.style.display = "block";
-
+            let btn = document.getElementById("btnGenerateAI"); let loader = document.getElementById("aiLoader"); btn.disabled = true; loader.style.display = "block";
             try {
-                loader.innerText = "در حال جمع‌آوری اطلاعات برای جمینای... 📦";
-                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || [];
-                let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || [];
-                let reflection = document.getElementById("aiPromptText").value.trim();
-                let masterSyllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
-                if(evals.length === 0) evals = Object.keys(userSubjectEvals).map(s => ({subject_name: s, eval_level: userSubjectEvals[s]}));
-
-                let aiPayload = { grade: currentUser.grade, major: currentUser.major, lunchTime: currentUser.lunch_time, dinnerTime: currentUser.dinner_time, evals: evals, fixedClasses: fixedClasses, reflection: reflection, syllabus: masterSyllabus };
-
-                loader.innerText = "جمینای در حال چیدن تقویم و محاسبه زمان‌ها... 🧠⏳";
-                const aiResponse = await fetch(NEW_GAS_AI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ data: aiPayload }), redirect: "follow" });
-                const aiData = await aiResponse.json();
-                
+                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || []; let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || []; let syllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
+                let payload = { grade: currentUser.grade, major: currentUser.major, lunchTime: currentUser.lunch_time, dinnerTime: currentUser.dinner_time, evals: evals, fixedClasses: fixedClasses, reflection: document.getElementById("aiPromptText").value, syllabus: syllabus };
+                const res = await fetch(NEW_GAS_AI_URL, { method: 'POST', body: JSON.stringify({ data: payload }), redirect: "follow" }); const aiData = await res.json();
                 if(aiData.status !== "Success") throw new Error(aiData.message);
-
-                let generatedSchedule = aiData.result.schedule;
-                let aiMessage = aiData.result.aiMessage;
-                let summary = aiData.result.generalSummary;
-                let weekName = getWeekName();
-                
-                loader.innerText = "در حال ارسال به اتاق فرمان برای تایید مشاور... 🚀";
-
-                // 🌟 ذخیره در دیتابیس با وضعیت "در انتظار"
-                await dbRequest('weekly_schedules', 'POST', [{
-                    student_id: currentUser.id, 
-                    week_name: weekName, 
-                    student_reflection: reflection,
-                    ai_feedback: JSON.stringify({ msg: aiMessage, sum: summary }), 
-                    schedule_json: generatedSchedule, 
-                    status: 'در انتظار'
-                }]);
-
-                // به جای رندر کردن، می‌ره تو صفحه انتظار
+                await dbRequest('weekly_schedules', 'POST', [{ student_id: currentUser.id, week_name: getWeekName(), student_reflection: payload.reflection, ai_feedback: JSON.stringify({ msg: aiData.result.aiMessage, sum: aiData.result.generalSummary }), schedule_json: aiData.result.schedule, status: 'در انتظار' }]);
                 showScreen('pendingApprovalScreen');
-
-            } catch(e) { alert("خطا در پردازش هوشمند: " + e.message); }
-            
+            } catch(e) { alert("خطا: " + e.message); }
             btn.disabled = false; loader.style.display = "none";
-            loader.innerText = "هسته هوشمند در حال پردازش هزاران حالت... 🧠";
         }
 
-        // =========================================================
-        // رندر نهایی تقویم (فقط وقتی تایید شده باشد اجرا می‌شود)
-        // =========================================================
-        function renderTimeline(schedule, aiMessage = "", summary = "") {
-            let container = document.getElementById('timelineContainer');
-            container.innerHTML = ""; let totalMins = 0;
-
-            if(aiMessage) {
-                container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; line-height:1.8;"><strong style="color:#b5740a;">پیام مشاور هوشمند تو:</strong><br><span style="font-size:14px; font-weight:bold; color:var(--text-dark);">${aiMessage}</span></div>`;
-            }
-            if(summary) {
-                container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; line-height:1.8;"><strong style="color:#1c5b82;">📊 استراتژی کلی این هفته:</strong><br><span style="font-size:13px; font-weight:bold; color:var(--text-dark);">${summary}</span></div>`;
-            }
-
-            schedule.forEach((day, i) => {
-                let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`;
-                day.forEach(b => {
-                    let time = `${minsToTime(b.start)} تا ${minsToTime(b.end)}`;
-                    if(b.type === 'study') {
-                        totalMins += (b.end - b.start);
-                        let css = b.isGen ? 'bg-general' : 'bg-specific';
-                        let details = b.topic ? `مبحث: ${b.topic} <br> 🎯 هدف‌گذاری: ${b.tests || 0} تست` : "";
-                        html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content ${css}"><div class="s-title">📘 ${b.title}</div><div class="s-details">${details}</div></div></div>`;
-                    }
-                    else if(b.type === 'break') html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content bg-break"><strong>${b.title}</strong></div></div>`;
-                    else if(b.type === 'fixed') html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content bg-fixed"><strong>${b.title}</strong></div></div>`;
-                });
-                html += `</div>`; container.innerHTML += html;
-            });
-
-            document.getElementById('scheduleStats').innerText = `✅ تقویم قفل شد. زمان مطالعه خالص: ${Math.floor(totalMins/60)} ساعت.`;
+        function renderTimeline(schedule, msg, sum) {
+            let container = document.getElementById('timelineContainer'); container.innerHTML = "";
+            if(msg) container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px;"><strong>پیام مشاور:</strong><br>${msg}</div>`;
+            if(sum) container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px;"><strong>استراتژی:</strong><br>${sum}</div>`;
+            schedule.forEach((day, i) => { let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`; day.forEach(b => { let css = b.type === 'study' ? (b.isGen ? 'bg-general' : 'bg-specific') : (b.type === 'break' ? 'bg-break' : 'bg-fixed'); html += `<div class="s-block"><div class="s-time">${minsToTime(b.start)} تا ${minsToTime(b.end)}</div><div class="s-content ${css}"><strong>${b.title}</strong></div></div>`; }); html += `</div>`; container.innerHTML += html; });
             showScreen('scheduleScreen');
+        }
+
+        // ==========================================
+        // 3. فرم ثبت گزارش شبانه
+        // ==========================================
+        function openDateScreen() {
+            let select = document.getElementById("dateSelect"); select.innerHTML = ""; let labels = ["امروز", "دیروز", "پریروز", "۳ روز پیش", "۴ روز پیش", "۵ روز پیش", "۶ روز پیش"];
+            for(let i=0; i<7; i++) { let d = new Date(); d.setDate(d.getDate() - i); let shamsi = new Intl.DateTimeFormat('fa-IR', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); let opt = document.createElement("option"); opt.value = shamsi; opt.text = `${labels[i]}  (${shamsi})`; if(i===0) opt.selected = true; select.appendChild(opt); }
+            showScreen('dateScreen');
+        }
+
+        async function checkDate() {
+            selectedDate = document.getElementById("dateSelect").value;
+            document.getElementById("dateBtn").disabled = true; document.getElementById("dateBtn").innerText = "بررسی...";
+            let exists = await dbRequest(`daily_reports?student_id=eq.${currentUser.id}&report_date_shamsi=eq.${encodeURIComponent(selectedDate)}&select=id`);
+            document.getElementById("dateBtn").disabled = false; document.getElementById("dateBtn").innerText = "ورود به فرم";
+            if(exists && exists.length > 0) return alert("شما قبلاً برای این روز گزارش ثبت کرده‌اید!");
+            document.getElementById("dashDateText").innerText = "تاریخ: " + selectedDate;
+            if(courseCount === 0) addCourseRow(); showScreen('dashboard');
+        }
+
+        function addCourseRow() {
+            courseCount++; let div = document.createElement("div"); div.className = "course-box"; div.id = "course_" + courseCount;
+            let optionsHtml = (syllabusRef[currentUser.grade][currentUser.major] || []).map(s => `<option value="${s}">${s}</option>`).join('');
+            div.innerHTML = `<div class="input-group"><label style="color:var(--pink);">نام درس:</label><select class="c-name">${optionsHtml}</select></div><div class="slider-header"><label>آموزشی <span class="val-badge" id="v_edu_${courseCount}">0</span></label></div><input type="range" class="c-edu" min="0" max="12" step="0.5" value="0" oninput="document.getElementById('v_edu_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>مطالعه <span class="val-badge" id="v_std_${courseCount}">0</span></label></div><input type="range" class="c-std" min="0" max="12" step="0.5" value="0" oninput="document.getElementById('v_std_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>تست <span class="val-badge" id="v_tst_${courseCount}">0</span></label></div><input type="range" class="c-tst" min="0" max="400" step="5" value="0" oninput="document.getElementById('v_tst_${courseCount}').innerText = this.value">${courseCount>1?`<button class="btn-danger" onclick="document.getElementById('${div.id}').remove()">حذف</button>`:''}`;
+            document.getElementById("courseContainer").appendChild(div);
+        }
+
+        async function submitDailyReport() {
+            let btn = document.getElementById("submitReportBtn"); btn.disabled = true; btn.innerText = "در حال ارسال...";
+            try {
+                let courses = [];
+                document.querySelectorAll(".course-box").forEach(box => {
+                    let edu = parseFloat(box.querySelector(".c-edu").value) || 0; let std = parseFloat(box.querySelector(".c-std").value) || 0; let tst = parseInt(box.querySelector(".c-tst").value) || 0;
+                    if(edu>0 || std>0 || tst>0) courses.push({ name: box.querySelector(".c-name").value, edu: edu, study: std, tests: tst });
+                });
+                if(courses.length === 0) throw new Error("حداقل اطلاعات یک درس را وارد کنید!");
+                
+                await dbRequest('daily_reports', 'POST', [{
+                    student_id: currentUser.id, report_date_shamsi: selectedDate, courses_data: courses,
+                    sleep_last_night: document.getElementById("v_sleepLast").innerText, wake_today: document.getElementById("v_wakeToday").innerText,
+                    nap_hours: parseFloat(document.getElementById("life_nap").value) || 0, phone_hours: parseFloat(document.getElementById("life_phone").value) || 0, mood: document.getElementById("life_mood").value
+                }]);
+                showScreen('successScreen');
+            } catch(e) { alert("خطا: " + e.message); btn.disabled = false; btn.innerText = "🚀 ثبت نهایی در هسته"; }
         }
     </script>
 </body>
