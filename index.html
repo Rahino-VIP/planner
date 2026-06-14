@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* استفاده از استایل‌های زیبای خودت */
         :root { --pink: #d97b7b; --pink-light: #fbecec; --green: #7ca881; --green-light: #e5eee6; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; }
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
@@ -57,17 +56,12 @@
     </div>
 
     <script>
-        // ==========================================
-        // ۱. اتصال مستقیم به سوپابیس (Supabase)
-        // ==========================================
-        const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; // <--- آدرس خودت را اینجا بذار
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // <--- کلید anon خودت را اینجا بذار
-        
-        var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // اتصال دقیق و بدون تداخل به دیتابیس سوپابیس شما
+        const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ==========================================
-        // ۲. موتور هوش مصنوعی راهینو (AI Core)
-        // ==========================================
+        // موتور برنامه‌ریز
         function generateSmartSchedule(studentProfile, syllabusData) {
             const { availableMinutes, weakSubjects, strongSubjects } = studentProfile;
             let totalNeededMinutes = 0;
@@ -101,9 +95,7 @@
             return finalSchedule;
         }
 
-        // ==========================================
-        // ۳. اجرای عملیات با کلیک روی دکمه
-        // ==========================================
+        // عملکرد دکمه تولید
         async function runAI() {
             let btn = document.getElementById('btnGenerate');
             let output = document.getElementById('outputArea');
@@ -111,7 +103,6 @@
             btn.disabled = true;
 
             try {
-                // الف) گرفتن اطلاعات فرم
                 let hours = parseInt(document.getElementById('freeTimeHours').value) || 40;
                 let profile = {
                     availableMinutes: hours * 60,
@@ -119,20 +110,18 @@
                     strongSubjects: Array.from(document.getElementById('strongSubjects').selectedOptions).map(o => o.value)
                 };
 
-                // ب) خواندنِ برنامه راهبردی ۱۸ مهر از سوپابیس
-                const { data: syllabus, error } = await supabase
+                const { data: syllabus, error } = await supabaseClient
                     .from('master_syllabus')
                     .select('*')
                     .eq('exam_date_shamsi', '1403/07/18');
 
                 if (error) throw error;
+                if (!syllabus || syllabus.length === 0) throw new Error("دیتایی برای تاریخ 1403/07/18 پیدا نشد.");
 
                 btn.innerText = "در حال پردازش پارت‌ها...";
 
-                // ج) اجرای الگوریتم هوش مصنوعی
                 let generatedChunks = generateSmartSchedule(profile, syllabus);
 
-                // د) نمایش گرافیکی نتیجه روی صفحه
                 output.innerHTML = `<h3 style="color:var(--pink); text-align:center;">برنامه شخصی‌سازی شده شما:</h3>
                                     <p style="text-align:center; font-size:12px; margin-bottom:15px;">سیستم ${generatedChunks.length} پارت مطالعاتی برای شما تولید کرد.</p>`;
                 
@@ -151,7 +140,7 @@
 
             } catch (err) {
                 console.error(err);
-                alert("خطا در ارتباط با سوپابیس! آیا کلیدها را درست وارد کردی؟");
+                alert("خطا: " + err.message);
                 btn.innerText = "تلاش مجدد";
                 btn.disabled = false;
             }
