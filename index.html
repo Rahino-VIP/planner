@@ -330,112 +330,79 @@
         // =========================================================
         // موتور قدرتمند Time-Blocking (نسخه تکامل‌یافته)
         // =========================================================
+// 🔗 لینک اسکریپت جدیدِ گوگل که مخصوص هوش مصنوعی ساختی رو اینجا بذار
+        const NEW_GAS_AI_URL = 'YOUR_NEW_GOOGLE_SCRIPT_URL_HERE';
+
+        // =========================================================
+        // واگذاری کامل تولید تقویم به جمینای
+        // =========================================================
         async function triggerAIGeneration() {
-            document.getElementById("btnGenerateAI").disabled = true;
-            document.getElementById("aiLoader").style.display = "block";
+            let btn = document.getElementById("btnGenerateAI");
+            let loader = document.getElementById("aiLoader");
+            btn.disabled = true; loader.style.display = "block";
 
             try {
-                // دریافت دیتای کاربر (یا از دیتابیس یا از متغیرهای محلی اگر تازه پر کرده)
-                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`);
-                let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`);
-                let reflection = document.getElementById("aiPromptText").value;
+                loader.innerText = "در حال جمع‌آوری اطلاعات برای جمینای... 📦";
                 
-                if(evals.length === 0) { // اگر دیتابیس خالی بود، از استیت استفاده کن
-                    evals = Object.keys(userSubjectEvals).map(s => ({subject_name: s, eval_level: userSubjectEvals[s]}));
-                }
-
-                // اتصال به بودجه‌بندی (اگر دیتابیس خالی بود، مقادیر فیک هوشمند می‌دهد)
-                let masterSyllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`);
-
-                let schedule = buildCoreLogicCalendar(fixedClasses || [], evals, masterSyllabus || []);
+                // دریافت دیتای کاربر از دیتابیس
+                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || [];
+                let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || [];
+                let reflection = document.getElementById("aiPromptText").value.trim();
+                let masterSyllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
                 
+                if(evals.length === 0) evals = Object.keys(userSubjectEvals).map(s => ({subject_name: s, eval_level: userSubjectEvals[s]}));
+
+                let aiPayload = {
+                    grade: currentUser.grade,
+                    major: currentUser.major,
+                    lunchTime: currentUser.lunch_time,
+                    dinnerTime: currentUser.dinner_time,
+                    evals: evals,
+                    fixedClasses: fixedClasses,
+                    reflection: reflection,
+                    syllabus: masterSyllabus
+                };
+
+                loader.innerText = "جمینای در حال چیدن تقویم و محاسبه زمان‌ها... 🧠⏳";
+                
+                // ارسال مستقیم به اسکریپت جدید
+                const aiResponse = await fetch(NEW_GAS_AI_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ data: aiPayload }),
+                    redirect: "follow"
+                });
+                
+                const aiData = await aiResponse.json();
+                
+                if(aiData.status !== "Success") throw new Error(aiData.message);
+
+                let generatedSchedule = aiData.result.schedule;
+                let aiMessage = aiData.result.aiMessage;
                 let weekName = getWeekName();
-                // قفل کردن برنامه در دیتابیس
+                
+                loader.innerText = "در حال ذخیره در دیتابیس... 💾";
+
+                // ذخیره برنامه تولید شده توسط جمینای در سوپابیس
                 await dbRequest('weekly_schedules', 'POST', [{
-                    student_id: currentUser.id, week_name: weekName, student_reflection: reflection, schedule_json: schedule, status: 'تکمیل شده'
+                    student_id: currentUser.id, 
+                    week_name: weekName, 
+                    student_reflection: reflection,
+                    ai_feedback: aiMessage, 
+                    schedule_json: generatedSchedule, 
+                    status: 'تکمیل شده'
                 }]);
 
                 document.getElementById("scheduleTitle").innerText = weekName;
-                renderTimeline(schedule);
+                renderTimeline(generatedSchedule, aiMessage);
 
-            } catch(e) { alert("خطا در پردازش. لطفاً مجدداً تلاش کنید."); }
-            document.getElementById("btnGenerateAI").disabled = false;
-            document.getElementById("aiLoader").style.display = "none";
-        }
-
-        function buildCoreLogicCalendar(fixedClasses, evals, syllabusDB) {
-            let schedule = [[], [], [], [], [], [], []]; 
-            const START = 7*60; const END = 23*60; const BREAK = 15;
-            let lunchTime = timeToMins(currentUser.lunch_time || "13:30");
-            let dinnerTime = timeToMins(currentUser.dinner_time || "20:30");
-
-            let pool = [];
-            evals.forEach(e => {
-                let isGen = generalSubjects.includes(e.subject_name);
-                let duration = isGen ? 120 : 90;
-                let count = isGen ? 1 : (e.eval_level === 'weak' ? 4 : e.eval_level === 'strong' ? 2 : 3);
-                
-                // پیدا کردن مبحث از بودجه بندی
-                let targetSyllabus = syllabusDB.find(s => s.subject === e.subject_name);
-                let topic = targetSyllabus ? targetSyllabus.topic_name : "مرور و پیش‌روی مباحث";
-                let tests = targetSyllabus ? Math.round(targetSyllabus.target_tests / count) : (isGen ? 30 : 45);
-
-                for(let i=0; i<count; i++) pool.push({ name: e.subject_name, isGen: isGen, duration: duration, topic: topic, tests: tests });
-            });
-            pool.sort(() => Math.random() - 0.5);
-
-            for(let d=0; d<7; d++) {
-                let current = START;
-                let fixedBlocks = [
-                    { type: 'fixed', title: '🍲 استراحت و ناهار', start: lunchTime, end: lunchTime + 60 },
-                    { type: 'fixed', title: '🍽️ استراحت و شام', start: dinnerTime, end: dinnerTime + 30 }
-                ];
-                
-                fixedClasses.forEach(fc => {
-                    if(fc.days_of_week.includes(d)) fixedBlocks.push({ type: 'fixed', title: `🏫 کلاس: ${fc.class_name}`, start: timeToMins(fc.start_time), end: timeToMins(fc.end_time) });
-                });
-                fixedBlocks.sort((a,b) => a.start - b.start);
-
-                if(d === 6) { // مدیریت روز جمعه
-                    if(currentUser.grade !== "دوازدهم") {
-                        schedule[d].push({ type: 'break', title: '🎉 روز استراحت مطلق و جبرانی', start: START, end: END });
-                        continue;
-                    } else {
-                        fixedBlocks.push({ type: 'fixed', title: '📝 آزمون جامع و تحلیل', start: START, end: 13*60 });
-                        current = 14*60; 
-                    }
-                }
-
-                while(current < END && pool.length > 0) {
-                    let nextFixed = fixedBlocks.find(f => f.start >= current && f.start < current + 90);
-                    if(nextFixed) {
-                        if(nextFixed.start - current < 60) {
-                            schedule[d].push(nextFixed); current = nextFixed.end;
-                            fixedBlocks = fixedBlocks.filter(f => f !== nextFixed);
-                            continue;
-                        }
-                    }
-
-                    let task = pool.shift();
-                    let end = current + task.duration;
-                    if(end > END) { pool.unshift(task); break; }
-
-                    schedule[d].push({ type: 'study', title: task.name, isGen: task.isGen, topic: task.topic, tests: task.tests, start: current, end: end });
-                    current = end;
-
-                    // هوشمندی: آیا به تایم ناهار/شام چسبیدیم؟ اگر نه، استراحت بده
-                    let touchesNextMeal = fixedBlocks.some(f => f.start === current && f.title.includes("استراحت"));
-                    if(!touchesNextMeal && current + BREAK < END) {
-                        schedule[d].push({ type: 'break', title: '☕ استراحت', start: current, end: current + BREAK });
-                        current += BREAK;
-                    }
-                }
-                fixedBlocks.forEach(fb => { if(!schedule[d].includes(fb)) schedule[d].push(fb); });
-                schedule[d].sort((a,b) => a.start - b.start);
+            } catch(e) { 
+                alert("خطا در پردازش هوشمند: " + e.message); 
             }
-            return schedule;
+            
+            btn.disabled = false; loader.style.display = "none";
+            loader.innerText = "هسته هوشمند در حال پردازش هزاران حالت... 🧠"; // ریست کردن متن
         }
-
         function renderTimeline(schedule) {
             let container = document.getElementById('timelineContainer');
             container.innerHTML = ""; let totalMins = 0;
