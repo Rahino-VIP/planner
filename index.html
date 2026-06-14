@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قطب‌نمای هوشمند VIP</title>
+    <title>قطب‌نمای هوشمند راهینو</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root { --pink: #d97b7b; --pink-dark: #b85c5c; --pink-light: #fbecec; --green: #7ca881; --green-light: #e5eee6; --yellow: #fca311; --blue: #4ea8de; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); }
+        :root { 
+            --pink: #d97b7b; --pink-dark: #b85c5c; --pink-light: #fbecec; 
+            --green: #7ca881; --green-light: #e5eee6; 
+            --yellow: #fca311; --blue: #4ea8de; 
+            --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; 
+            --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); 
+        }
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; background-image: radial-gradient(var(--green-light) 2px, transparent 2px); background-size: 25px 25px; }
+        
         .container { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; width: 100%; max-width: 550px; box-shadow: var(--shadow); border: 2px solid var(--white); display: none; margin-bottom: 20px; animation: fadeIn 0.4s ease-in-out;}
         .active-screen { display: block !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -29,21 +36,20 @@
         .btn:active { transform: scale(0.96); }
         .btn-primary { background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: var(--white); box-shadow: 0 6px 20px rgba(217, 123, 123, 0.4); }
         .btn-outline { background: var(--white); color: var(--text-dark); border: 2px dashed #ccc; }
-        .btn-danger { background: #ffeded; color: #d9534f; padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid #fadcdc; font-weight: bold;}
+        .btn-danger { background: #ffeded; color: #d9534f; padding: 10px 15px; border-radius: 12px; margin-top: 5px; border: 1px solid #fadcdc; font-weight: bold; cursor: pointer;}
         
         .menu-card { background: var(--white); border: 2px solid var(--green-light); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
         .menu-card:hover { border-color: var(--pink); transform: translateY(-3px); }
         .menu-icon { font-size: 35px; display: block; }
 
-        /* استایل‌های زمان و اسلایدرها */
         .time-slider-box, .slider-frame { background: #fdfdfd; border: 2px solid var(--green-light); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         .time-header, .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
         .time-badge, .val-badge { background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
+        
         input[type="range"] { width: 100%; -webkit-appearance: none; background: transparent; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #e0e8e1; border-radius: 10px; }
         input[type="range"]::-webkit-slider-thumb { border: 3px solid var(--white); height: 24px; width: 24px; border-radius: 50%; background: var(--pink); cursor: pointer; -webkit-appearance: none; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* ارزیابی دروس */
         .eval-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #eee; }
         .btn-group { display: flex; gap: 5px; background: #f0f0f0; padding: 4px; border-radius: 12px;}
         .btn-eval { border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; background: transparent; color: #666; transition: 0.2s;}
@@ -51,128 +57,121 @@
         .btn-eval.active[data-val="normal"] { background: var(--white); color: var(--text-dark);}
         .btn-eval.active[data-val="strong"] { background: var(--green-light); color: var(--green);}
 
-        /* کلاس‌های ثابت */
         .days-wrapper { display: flex; justify-content: space-between; margin-bottom: 15px; direction: rtl;}
         .day-circle { width: 38px; height: 38px; border-radius: 50%; background: #f0f0f0; color: #666; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer;}
         .day-circle.selected { background: var(--pink); color: var(--white); transform: scale(1.1);}
         .fixed-class-box { background: var(--white); border: 2px solid var(--blue); padding: 15px; border-radius: 16px; margin-bottom: 15px; position: relative;}
         
-        /* تقویم */
         .schedule-day { background: var(--white); border: 2px solid var(--blue); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
         .s-day-header { background: #e3f2fd; color: #1c5b82; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between;}
         .s-block { display: flex; align-items: stretch; border-bottom: 1px solid #f0f0f0; }
         .s-time { width: 95px; background: #fcfcfc; padding: 15px 5px; text-align: center; font-size: 13px; font-weight: bold; color: #555; border-left: 2px solid #eee; display: flex; flex-direction: column; justify-content: center;}
         .s-content { flex: 1; padding: 15px; }
+        .s-title { font-weight: 900; font-size: 15px; margin-bottom: 4px;}
+        .s-details { font-size: 12px; font-weight: bold; opacity: 0.8;}
+        
         .bg-specific { background-color: #fbecec; color: #b85c5c; border-right: 4px solid var(--pink); }
         .bg-general { background-color: #fffdf5; color: #b5740a; border-right: 4px solid var(--yellow); }
         .bg-fixed { background-color: #f8f9fa; color: #444; border-right: 4px solid #adb5bd; }
         .bg-break { background-color: var(--green-light); color: var(--green); border-right: 4px solid var(--green); padding: 10px 15px !important;}
         
-        /* مود دکمه‌های لایف استایل */
         .mood-container { display: flex; justify-content: space-between; gap: 10px; }
         .mood-btn { flex: 1; padding: 15px 5px; border-radius: 16px; background: #fafbfc; border: 2px solid var(--green-light); cursor: pointer; text-align: center; }
         .mood-btn.active { border-color: var(--pink); background: var(--pink-light); transform: translateY(-3px); }
         
-        .course-box { background: #fdfdfd; border: 2px solid var(--green-light); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .course-box { background: #fdfdfd; border: 2px solid var(--green-light); padding: 20px; border-radius: 20px; margin-bottom: 20px; position: relative;}
         .loader { text-align: center; color: var(--pink); font-weight: bold; font-size: 14px; margin-top: 10px; display: none;}
     </style>
 </head>
 <body>
 
-    <!-- 1. ورود -->
     <div class="container active-screen" id="loginScreen">
         <div class="logo-box">🧭</div><h1>قطب‌نمای راهینو</h1><p class="subtitle">سیستم مدیریت یادگیری هوشمند</p>
         <div class="input-group"><label>آیدی عددی:</label><input type="text" id="userId" placeholder="مثال: 12345" style="direction: ltr;"></div>
         <div class="input-group"><label>رمز عبور:</label><input type="password" id="userPass" placeholder="••••" style="direction: ltr;"></div>
         <button class="btn btn-primary" onclick="handleLogin()" id="loginBtn">تایید و ورود</button>
-        <div id="loginLoader" class="loader">در حال بررسی... ⏳</div>
+        <div id="loginLoader" class="loader">در حال بررسی اطلاعات... ⏳</div>
     </div>
 
-    <!-- 2. منوی اصلی -->
     <div class="container" id="homeMenu">
         <div class="logo-box">🏠</div><h1 id="userNameDisplay">خوش آمدی</h1><p class="subtitle" id="userGradeDisplay" style="margin-bottom: 25px;"></p>
-        <div class="menu-card" onclick="initPlannerSequence()" style="border-color: var(--blue); background: #f0f8ff;"><span class="menu-icon">🎯</span><h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color:#666; font-size:12px;">تقویم اختصاصی</p></div>
-        <div class="menu-card" onclick="openDateScreen()"><span class="menu-icon">📝</span><h3>ثبت گزارش روزانه</h3><p style="color:#666; font-size:12px;">لایف‌استایل و تیک دروس</p></div>
-        <div class="menu-card" onclick="alert('بخش کارنامه پس از انتقال کامل دیتا به سوپابیس در آپدیت بعدی فعال می‌شود.')"><span class="menu-icon">📊</span><h3>روند پیشرفت من</h3><p style="color:#666; font-size:12px;">نمودارها و تحلیل</p></div>
+        <div class="menu-card" onclick="initPlannerSequence()" style="border-color: var(--blue); background: #f0f8ff;"><span class="menu-icon">🎯</span><h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color:#666; font-size:12px;">تقویم اختصاصی هفتگی</p></div>
+        <div class="menu-card" onclick="openDateScreen()"><span class="menu-icon">📝</span><h3>ثبت گزارش روزانه</h3><p style="color:#666; font-size:12px;">تیک زدن دروس و ثبت لایف‌استایل</p></div>
+        <div class="menu-card" onclick="alert('کارنامه تحلیلی در آپدیت بعدی فعال می‌شود.')"><span class="menu-icon">📊</span><h3>روند پیشرفت من</h3><p style="color:#666; font-size:12px;">نمودارها و تحلیل هسته</p></div>
     </div>
 
-    <!-- 3. فرم تنظیمات (آنبوردینگ) -->
     <div class="container" id="onboardingScreen">
         <div class="logo-box">⚙️</div><h1>تنظیمات موتور برنامه‌ریز</h1>
-        <span class="section-title">🏫 کلاس‌های ثابت شما</span><div id="fixedClassesContainer"></div><button class="btn btn-outline" onclick="addFixedClassUI()">➕ کلاس جدید</button>
+        <p class="subtitle">این اطلاعات فقط یک‌بار برای همیشه ذخیره می‌شوند</p>
+        <span class="section-title">🏫 کلاس‌های ثابت شما</span><div id="fixedClassesContainer"></div><button class="btn btn-outline" onclick="addFixedClassUI()">➕ افزودن کلاس جدید</button>
         <span class="section-title">🎯 ارزیابی سطح دروس</span><div id="subjectsEvalContainer" style="background:#fff; border:2px solid #eee; border-radius:16px; padding:10px;"></div>
         <span class="section-title">🍽️ تنظیمات استراحت‌های اصلی</span>
         <div class="time-slider-box"><div class="time-header"><label>ناهار (۱ ساعت)</label><span class="time-badge" id="badgeLunch">13:30</span></div><input type="range" id="sliderLunch" min="11" max="16" step="0.5" value="13.5" oninput="updateSliderBadge(this, 'badgeLunch')"></div>
         <div class="time-slider-box"><div class="time-header"><label>شام (نیم ساعت)</label><span class="time-badge" id="badgeDinner">20:30</span></div><input type="range" id="sliderDinner" min="18" max="23" step="0.5" value="20.5" oninput="updateSliderBadge(this, 'badgeDinner')"></div>
-        <button class="btn btn-primary" id="btnSaveOnboarding" onclick="saveOnboardingData()">ذخیره تنظیمات 🚀</button>
-        <div id="onboardingLoader" class="loader">در حال ذخیره... ⏳</div>
+        <button class="btn btn-primary" id="btnSaveOnboarding" onclick="saveOnboardingData()">ذخیره تنظیمات و ادامه 🚀</button>
+        <div id="onboardingLoader" class="loader">در حال ذخیره در سیستم... ⏳</div>
     </div>
 
-    <!-- 4. اتاق فکر هوشمند (جمعه‌ها) -->
     <div class="container" id="fridayReflectionScreen">
-        <div class="logo-box">🤖</div><h1 style="color:var(--pink);">اتاق فکر هوشمند</h1>
-        <div class="input-group"><label>درخواست خاصی برای این هفته داری؟</label><textarea id="aiPromptText" rows="5"></textarea></div>
-        <button class="btn btn-primary" id="btnGenerateAI" onclick="triggerAIGeneration()">ارسال به موتور هوش مصنوعی ⏳</button>
-        <div id="aiLoader" class="loader">هسته هوشمند در حال تولید برنامه... 🧠</div>
+        <div class="logo-box">🤖</div><h1 style="color:var(--pink);">اتاق فکر هفته آینده</h1>
+        <p class="subtitle" id="weekNameDisplay"></p>
+        <div class="input-group"><label>اتفاق خاص، امتحان یا درخواستی برای این هفته داری؟</label><textarea id="aiPromptText" rows="5" placeholder="مثلاً: دوشنبه امتحان شیمی دارم. پنجشنبه مسافرتیم..."></textarea></div>
+        <button class="btn btn-primary" id="btnGenerateAI" onclick="triggerAIGeneration()">ارسال به هوش مصنوعی ⏳</button>
+        <div id="aiLoader" class="loader">جمینای در حال پردازش دقیق قوانین زمانی... 🧠</div>
     </div>
 
-    <!-- 5. صفحه انتظار تایید -->
     <div class="container" id="pendingApprovalScreen">
         <div class="logo-box" style="font-size: 70px;">⏳</div><h1 style="color:var(--blue);">برنامه در صف بررسی</h1>
-        <p class="subtitle" style="margin-top:10px; line-height:1.8;">هوش مصنوعی تقویم را چید! <br> اما برای بررسی، اصلاح و تایید برای مشاور ارسال شده است.</p>
+        <p class="subtitle" style="margin-top:10px; line-height:1.8;">هوش مصنوعی تقویم اختصاصی شما را چید! <br> اما این برنامه جهت <strong>بررسی، اصلاح و تایید نهایی</strong> برای مشاور شما ارسال شده است.</p>
+        <div style="background:#e3f2fd; padding:15px; border-radius:15px; text-align:center; font-weight:bold; color:#1c5b82; margin-bottom:20px;">به محض تایید مشاور، تقویم شما قفل و فعال می‌شود.</div>
         <button class="btn btn-outline" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
     </div>
 
-    <!-- 6. نمایش تقویم نهایی -->
     <div class="container" id="scheduleScreen">
-        <h1 id="scheduleTitle"></h1><div id="timelineContainer"></div>
-        <button class="btn btn-primary" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
+        <h1 id="scheduleTitle" style="color:var(--text-dark);"></h1><p class="subtitle" id="scheduleStats"></p>
+        <div id="timelineContainer"></div>
+        <button class="btn btn-primary" style="background:var(--text-dark);" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
     </div>
 
-    <!-- 7. انتخاب روز برای گزارش -->
     <div class="container" id="dateScreen">
         <div class="logo-box">🗓️</div><h1>انتخاب روز گزارش</h1>
         <div class="input-group"><select id="dateSelect" size="7" style="height: auto; padding: 10px;"></select></div>
-        <button class="btn btn-primary" onclick="checkDate()" id="dateBtn">ورود به فرم</button>
+        <button class="btn btn-primary" onclick="checkDate()" id="dateBtn">ورود به فرم گزارش</button>
         <button class="btn btn-outline" onclick="showScreen('homeMenu')" style="border:none;">❌ انصراف</button>
     </div>
 
-    <!-- 8. فرم ثبت گزارش شبانه (با لایف‌استایل) -->
     <div class="container" id="dashboard">
-        <h1 style="font-size: 20px;">ثبت گزارش</h1><p id="dashDateText" class="subtitle" style="color:var(--pink);"></p>
-        <div class="section-title">📚 درسی</div>
-        <div id="courseContainer"></div>
-        <button class="btn btn-outline" onclick="addCourseRow()">➕ اضافه کردن درس دیگر</button>
+        <h1 style="font-size: 20px;">ثبت گزارش شبانه</h1><p id="dashDateText" class="subtitle" style="color:var(--pink); margin-bottom: 15px;"></p>
+        <div class="section-title">📚 وضعیت پارت‌های درسی</div><div id="courseContainer"></div><button class="btn btn-outline" onclick="addCourseRow()">➕ اضافه کردن درس دیگر</button>
         
-        <div class="section-title">🌿 لایف‌استایل</div>
-        <div class="slider-frame"><div class="slider-header"><label>خواب دیشب</label><span class="val-badge" id="v_sleepLast">23:00</span></div><input type="range" id="life_sleepLast" min="21" max="27" step="0.5" value="23" oninput="updateTimeLabel(this.value, 'v_sleepLast')"></div>
-        <div class="slider-frame"><div class="slider-header"><label>بیداری امروز</label><span class="val-badge" id="v_wakeToday">07:00</span></div><input type="range" id="life_wakeToday" min="4" max="12" step="0.5" value="7" oninput="updateTimeLabel(this.value, 'v_wakeToday')"></div>
-        <div class="slider-frame"><div class="slider-header"><label>گوشی</label><span class="val-badge" id="v_phone">1.5 ساعت</span></div><input type="range" id="life_phone" min="0" max="4" step="0.5" value="1.5" oninput="document.getElementById('v_phone').innerText = this.value + (this.value==4?'+':'') + ' ساعت'"></div>
+        <div class="section-title">🌿 سبک زندگی (Lifestyle)</div>
+        <div class="slider-frame"><div class="slider-header"><label>ساعت خواب دیشب</label><span class="val-badge" id="v_sleepLast">23:00</span></div><input type="range" id="life_sleepLast" min="21" max="27" step="0.5" value="23" oninput="updateTimeLabel(this.value, 'v_sleepLast')"></div>
+        <div class="slider-frame"><div class="slider-header"><label>ساعت بیداری امروز</label><span class="val-badge" id="v_wakeToday">07:00</span></div><input type="range" id="life_wakeToday" min="4" max="12" step="0.5" value="7" oninput="updateTimeLabel(this.value, 'v_wakeToday')"></div>
+        <div class="slider-frame"><div class="slider-header"><label>میزان خواب نیمروزی</label><span class="val-badge" id="v_nap">0 ساعت</span></div><input type="range" id="life_nap" min="0" max="3" step="0.5" value="0" oninput="document.getElementById('v_nap').innerText = this.value + ' ساعت'"></div>
+        <div class="slider-frame"><div class="slider-header"><label>استفاده از گوشی (غیردرسی)</label><span class="val-badge" id="v_phone">1.5 ساعت</span></div><input type="range" id="life_phone" min="0" max="8" step="0.5" value="1.5" oninput="document.getElementById('v_phone').innerText = this.value + ' ساعت'"></div>
         
         <div class="input-group" style="margin-top:20px;">
-            <label>وضعیت روحی:</label>
+            <label>وضعیت روحی امروز شما:</label>
             <div class="mood-container">
                 <div class="mood-btn" onclick="setMood(this, 'عالی')"><span>🤩</span><br><small>عالی</small></div>
                 <div class="mood-btn active" onclick="setMood(this, 'خوب')"><span>😊</span><br><small>خوب</small></div>
                 <div class="mood-btn" onclick="setMood(this, 'معمولی')"><span>🙂</span><br><small>معمولی</small></div>
                 <div class="mood-btn" onclick="setMood(this, 'بد')"><span>😞</span><br><small>بد</small></div>
-            </div>
-            <input type="hidden" id="life_mood" value="خوب">
+            </div><input type="hidden" id="life_mood" value="خوب">
         </div>
-        
-        <button class="btn btn-primary" id="submitReportBtn" onclick="submitDailyReport()">🚀 ثبت نهایی در هسته</button>
+        <button class="btn btn-primary" id="submitReportBtn" onclick="submitDailyReport()">🚀 ثبت و ارسال نهایی گزارش</button>
         <button class="btn btn-outline" style="border:none;" onclick="showScreen('homeMenu')">❌ انصراف</button>
     </div>
 
-    <!-- 9. پیام موفقیت گزارش -->
     <div class="container" id="successScreen">
-        <div class="logo-box"><span style="font-size: 80px;">🏆</span></div><h2 style="text-align:center;">گزارش با موفقیت ثبت شد</h2>
-        <button class="btn btn-outline" style="margin-top:30px;" onclick="showScreen('homeMenu')">بازگشت به خانه</button>
+        <div class="logo-box">🏆</div><h2 style="text-align:center; margin-bottom: 10px;">گزارش با موفقیت در هسته ثبت شد</h2>
+        <p style="text-align:center; color:#666; font-size:14px;">تحلیل این روز به کارنامه شما اضافه شد.</p>
+        <button class="btn btn-primary" style="margin-top:30px;" onclick="showScreen('homeMenu')">بازگشت به خانه</button>
     </div>
 
     <script>
         // ==========================================
-        // تنظیمات و پیکربندی سوپابیس
+        // 🔗 تنظیمات مرکزی اتصال به دیتابیس و هوش مصنوعی
         // ==========================================
         const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; // 👈 لینک سوپابیس شما
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // 👈 کلید سوپابیس شما
@@ -187,75 +186,46 @@
             "دوازدهم": { "ریاضی": ["حسابان 2", "ریاضیات پایه", "هندسه 3", "گسسته", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "تجربی": ["ریاضی 3", "زیست 3", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "انسانی": ["علوم و فنون ۳", "ریاضی و آمار ۳", "عربی انسانی ۳", "تاریخ ۳", "جامعه‌شناسی ۳", "جغرافیا ۳", "فلسفه ۲", "فارسی 3", "دینی 3", "زبان 3"] } 
         };
 
-        // توابع کمکی
         async function dbRequest(endpoint, method = 'GET', body = null) {
-            // حذف اسلش اضافه در انتهای لینک (اگر اشتباهی گذاشته باشی)
             let cleanUrl = SUPABASE_URL.endsWith('/') ? SUPABASE_URL.slice(0, -1) : SUPABASE_URL;
-            
-            const options = { 
-                method: method, 
-                headers: { 
-                    'apikey': SUPABASE_KEY, 
-                    'Authorization': `Bearer ${SUPABASE_KEY}`, 
-                    'Content-Type': 'application/json', 
-                    'Prefer': 'return=representation' 
-                }
-            };
+            const options = { method: method, headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }};
             if(body) options.body = JSON.stringify(body);
-            
             try { 
                 const res = await fetch(`${cleanUrl}/rest/v1/${endpoint}`, options); 
-                
-                // اگر سوپابیس ارور بده، دقیقاً پیام ارورش رو می‌گیریم و روی صفحه نشون می‌دیم
-                if(!res.ok) {
-                    const errorText = await res.text();
-                    alert("🚨 سوپابیس ارور داد: " + errorText);
-                    throw new Error("Supabase Error");
-                }
-                
+                if(!res.ok) { const txt = await res.text(); alert("🚨 خطا از سوپابیس: " + txt); throw new Error("Supabase Error"); }
                 return method !== 'DELETE' ? await res.json() : true; 
-            } catch (e) { 
-                console.error("ارور شبکه:", e);
-                // اینجا به جای آرایه خالی، null می‌فرستیم که سیستم بفهمه کلاً ارتباط قطع شده
-                return null; 
-            } 
+            } catch (e) { console.error(e); return null; } 
         }
 
+        function showScreen(id) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0,0); }
+        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
+        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
+        function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0');}`; }
+        function updateTimeLabel(val, labelId) { let h = Math.floor(val); let m = (val - h) * 60; if(h>=24) h-=24; document.getElementById(labelId).innerText = (h<10?'0'+h:h) + ':' + (m===0?'00':'30'); }
+        function setMood(elem, val) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); elem.classList.add('active'); document.getElementById("life_mood").value = val; }
+        function getWeekName() { let d = new Date(); let diff = (d.getDay() + 1) % 7; d.setDate(d.getDate() - diff - 1); return `برنامه هفته (از ${new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d)})`; }
+
+        // ==========================================
+        // 🚪 فرآیند لاگین خطایاب
+        // ==========================================
         async function handleLogin() {
-            let id = document.getElementById("userId").value.trim(); 
-            let pass = document.getElementById("userPass").value.trim();
-            if(!id || !pass) return alert("اطلاعات را وارد کنید.");
-            
-            document.getElementById("loginBtn").disabled = true; 
-            document.getElementById("loginLoader").style.display = "block";
-            
+            let id = document.getElementById("userId").value.trim(); let pass = document.getElementById("userPass").value.trim();
+            if(!id || !pass) return alert("لطفاً فیلدها را پر کنید.");
+            document.getElementById("loginBtn").disabled = true; document.getElementById("loginLoader").style.display = "block";
             let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
-            
-            // اگر ارتباط کلا قطع شده بود (مثلا مشکل لینک)
-            if (users === null) {
-                alert("❌ ارتباط با دیتابیس برقرار نشد. لینک و کلید سوپابیس را چک کن.");
-            } 
-            // اگر ارتباط وصل شد ولی کسی رو پیدا نکرد
-            else if (users.length === 0) {
-                alert("⚠️ ارتباط وصل شد، اما آیدی " + id + " در دیتابیس وجود ندارد!");
-            }
-            // اگر کاربر پیدا شد
+            if (users === null) alert("❌ ارتباط با دیتابیس برقرار نشد. لینک یا اینترنت را چک کنید.");
+            else if (users.length === 0) alert("⚠️ آیدی عددی شما در دیتابیس جدید یافت نشد!");
             else if(users.length > 0) {
                 if (users[0].password === pass) {
-                    currentUser = users[0]; 
-                    document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
-                    document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; 
-                    showScreen('homeMenu');
-                } else {
-                    alert("🔑 رمز عبور اشتباه است.");
-                }
+                    currentUser = users[0]; document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
+                    document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; showScreen('homeMenu');
+                } else alert("🔑 رمز عبور اشتباه است.");
             }
-            
-            document.getElementById("loginBtn").disabled = false; 
-            document.getElementById("loginLoader").style.display = "none";
+            document.getElementById("loginBtn").disabled = false; document.getElementById("loginLoader").style.display = "none";
         }
+
         // ==========================================
-        // 2. منطق برنامه‌ریز و هوش مصنوعی
+        // 🎯 فرآیند بررسی و مدیریت تقویم
         // ==========================================
         async function initPlannerSequence() {
             let weekName = getWeekName();
@@ -264,8 +234,9 @@
                 if(schedules[0].status === 'در انتظار') return showScreen('pendingApprovalScreen');
                 if(schedules[0].status === 'تایید شده') {
                     document.getElementById("scheduleTitle").innerText = weekName;
-                    let parsedFeed = JSON.parse(schedules[0].ai_feedback || "{}");
-                    return renderTimeline(schedules[0].schedule_json, parsedFeed.msg, parsedFeed.sum);
+                    let aiMsg = "", summary = "";
+                    try { let p = JSON.parse(schedules[0].ai_feedback); aiMsg = p.msg; summary = p.sum; } catch(e) { aiMsg = schedules[0].ai_feedback; }
+                    return renderTimeline(schedules[0].schedule_json, aiMsg, summary);
                 }
             }
             let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`);
@@ -279,7 +250,7 @@
         }
         function setEval(btn) { let subj = btn.getAttribute('data-subj'); userSubjectEvals[subj] = btn.getAttribute('data-val'); btn.parentElement.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
         function addFixedClassUI() {
-            let id = Date.now(); document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', `<div class="fixed-class-box" id="fc_${id}"><button class="btn-danger" onclick="document.getElementById('fc_${id}').remove()" style="position:absolute;top:10px;left:10px;padding:5px 10px;">حذف</button><div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس"></div><div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div><div style="display:flex; gap:10px;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge">16:00</div><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge">18:00</div></div></div>`);
+            let id = Date.now(); document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', `<div class="fixed-class-box" id="fc_${id}"><button class="btn-danger" onclick="document.getElementById('fc_${id}').remove()">حذف</button><div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس (مثلاً دبیرستان)"></div><div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div><div style="display:flex; gap:10px;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge">16:00</div><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge">18:00</div></div></div>`);
         }
 
         async function saveOnboardingData() {
@@ -289,7 +260,7 @@
             let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] })); await dbRequest('subject_evaluations', 'POST', evalsPayload);
             let classes = []; document.querySelectorAll('.fixed-class-box').forEach(box => { let name = box.querySelector('.fc-name').value; let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val'))); if(name && days.length > 0) classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: formatSliderTime(box.querySelector('.fc-start-s').value), end_time: formatSliderTime(box.querySelector('.fc-end-s').value) }); });
             if(classes.length > 0) await dbRequest('fixed_classes', 'POST', classes);
-            showScreen('fridayReflectionScreen'); document.getElementById("btnSaveOnboarding").disabled = false; document.getElementById("onboardingLoader").style.display = "none";
+            document.getElementById("weekNameDisplay").innerText = getWeekName(); showScreen('fridayReflectionScreen'); document.getElementById("btnSaveOnboarding").disabled = false; document.getElementById("onboardingLoader").style.display = "none";
         }
 
         async function triggerAIGeneration() {
@@ -301,61 +272,70 @@
                 if(aiData.status !== "Success") throw new Error(aiData.message);
                 await dbRequest('weekly_schedules', 'POST', [{ student_id: currentUser.id, week_name: getWeekName(), student_reflection: payload.reflection, ai_feedback: JSON.stringify({ msg: aiData.result.aiMessage, sum: aiData.result.generalSummary }), schedule_json: aiData.result.schedule, status: 'در انتظار' }]);
                 showScreen('pendingApprovalScreen');
-            } catch(e) { alert("خطا: " + e.message); }
+            } catch(e) { alert("خطا در پردازش هوش مصنوعی: " + e.message); }
             btn.disabled = false; loader.style.display = "none";
         }
 
         function renderTimeline(schedule, msg, sum) {
-            let container = document.getElementById('timelineContainer'); container.innerHTML = "";
-            if(msg) container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px;"><strong>پیام مشاور:</strong><br>${msg}</div>`;
-            if(sum) container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px;"><strong>استراتژی:</strong><br>${sum}</div>`;
-            schedule.forEach((day, i) => { let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`; day.forEach(b => { let css = b.type === 'study' ? (b.isGen ? 'bg-general' : 'bg-specific') : (b.type === 'break' ? 'bg-break' : 'bg-fixed'); html += `<div class="s-block"><div class="s-time">${minsToTime(b.start)} تا ${minsToTime(b.end)}</div><div class="s-content ${css}"><strong>${b.title}</strong></div></div>`; }); html += `</div>`; container.innerHTML += html; });
-            showScreen('scheduleScreen');
+            let container = document.getElementById('timelineContainer'); container.innerHTML = ""; let totalMins = 0;
+            if(msg) container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; font-size:13px; line-height:1.8;"><strong>💬 پیام انگیزشی مشاور:</strong><br>${msg}</div>`;
+            if(sum) container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; font-size:13px; line-height:1.8;"><strong>📊 استراتژی کلی این هفته:</strong><br>${sum}</div>`;
+            schedule.forEach((day, i) => { 
+                let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`; 
+                day.forEach(b => { 
+                    let css = b.type === 'study' ? (b.isGen ? 'bg-general' : 'bg-specific') : (b.type === 'break' ? 'bg-break' : 'bg-fixed'); 
+                    if(b.type === 'study') totalMins += (b.end - b.start);
+                    let det = b.topic ? `<div class="s-details">مبحث: ${b.topic} | 🎯 تارگت: ${b.tests || 0} تست</div>` : "";
+                    html += `<div class="s-block"><div class="s-time">${minsToTime(b.start)} تا ${minsToTime(b.end)}</div><div class="s-content ${css}"><div class="s-title">${b.title}</div>${det}</div></div>`; 
+                }); 
+                html += `</div>`; container.innerHTML += html; 
+            });
+            document.getElementById('scheduleStats').innerText = `زمان مطالعه خالص کل هفته: ${Math.floor(totalMins/60)} ساعت`; showScreen('scheduleScreen');
         }
 
         // ==========================================
-        // 3. فرم ثبت گزارش شبانه
+        // 📝 ثبت گزارش شبانه هوشمند
         // ==========================================
         function openDateScreen() {
             let select = document.getElementById("dateSelect"); select.innerHTML = ""; let labels = ["امروز", "دیروز", "پریروز", "۳ روز پیش", "۴ روز پیش", "۵ روز پیش", "۶ روز پیش"];
-            for(let i=0; i<7; i++) { let d = new Date(); d.setDate(d.getDate() - i); let shamsi = new Intl.DateTimeFormat('fa-IR', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); let opt = document.createElement("option"); opt.value = shamsi; opt.text = `${labels[i]}  (${shamsi})`; if(i===0) opt.selected = true; select.appendChild(opt); }
+            for(let i=0; i<7; i++) { let d = new Date(); d.setDate(d.getDate() - i); let shamsi = new Intl.DateTimeFormat('fa-IR', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); let opt = document.createElement("option"); opt.value = shamsi; opt.text = `${labels[i]} (${shamsi})`; if(i===0) opt.selected = true; select.appendChild(opt); }
             showScreen('dateScreen');
         }
 
         async function checkDate() {
-            selectedDate = document.getElementById("dateSelect").value;
-            document.getElementById("dateBtn").disabled = true; document.getElementById("dateBtn").innerText = "بررسی...";
+            selectedDate = document.getElementById("dateSelect").value; document.getElementById("dateBtn").disabled = true;
             let exists = await dbRequest(`daily_reports?student_id=eq.${currentUser.id}&report_date_shamsi=eq.${encodeURIComponent(selectedDate)}&select=id`);
-            document.getElementById("dateBtn").disabled = false; document.getElementById("dateBtn").innerText = "ورود به فرم";
-            if(exists && exists.length > 0) return alert("شما قبلاً برای این روز گزارش ثبت کرده‌اید!");
-            document.getElementById("dashDateText").innerText = "تاریخ: " + selectedDate;
-            if(courseCount === 0) addCourseRow(); showScreen('dashboard');
+            document.getElementById("dateBtn").disabled = false;
+            if(exists && exists.length > 0) return alert("شما قبلاً برای این تاریخ گزارش ثبت کرده‌اید!");
+            document.getElementById("dashDateText").innerText = "تاریخ گزارش: " + selectedDate;
+            document.getElementById("courseContainer").innerHTML = ""; courseCount = 0; addCourseRow(); showScreen('dashboard');
         }
 
         function addCourseRow() {
             courseCount++; let div = document.createElement("div"); div.className = "course-box"; div.id = "course_" + courseCount;
-            let optionsHtml = (syllabusRef[currentUser.grade][currentUser.major] || []).map(s => `<option value="${s}">${s}</option>`).join('');
-            div.innerHTML = `<div class="input-group"><label style="color:var(--pink);">نام درس:</label><select class="c-name">${optionsHtml}</select></div><div class="slider-header"><label>آموزشی <span class="val-badge" id="v_edu_${courseCount}">0</span></label></div><input type="range" class="c-edu" min="0" max="12" step="0.5" value="0" oninput="document.getElementById('v_edu_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>مطالعه <span class="val-badge" id="v_std_${courseCount}">0</span></label></div><input type="range" class="c-std" min="0" max="12" step="0.5" value="0" oninput="document.getElementById('v_std_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>تست <span class="val-badge" id="v_tst_${courseCount}">0</span></label></div><input type="range" class="c-tst" min="0" max="400" step="5" value="0" oninput="document.getElementById('v_tst_${courseCount}').innerText = this.value">${courseCount>1?`<button class="btn-danger" onclick="document.getElementById('${div.id}').remove()">حذف</button>`:''}`;
+            let opts = (syllabusRef[currentUser.grade][currentUser.major] || []).map(s => `<option value="${s}">${s}</option>`).join('');
+            div.innerHTML = `<button class="btn-danger" style="position:absolute; top:10px; left:10px;" onclick="document.getElementById('${div.id}').remove()">حذف</button><div class="input-group" style="margin-top:20px;"><label>نام درس:</label><select class="c-name">${opts}</select></div><div class="slider-header"><label>ساعت آموزش <span class="val-badge" id="v_edu_${courseCount}">0</span></label></div><input type="range" class="c-edu" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_edu_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>ساعت مطالعه خالص <span class="val-badge" id="v_std_${courseCount}">0</span></label></div><input type="range" class="c-std" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_std_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>تعداد تست <span class="val-badge" id="v_tst_${courseCount}">0</span></label></div><input type="range" class="c-tst" min="0" max="300" step="5" value="0" oninput="document.getElementById('v_tst_${courseCount}').innerText = this.value">`;
             document.getElementById("courseContainer").appendChild(div);
         }
 
         async function submitDailyReport() {
-            let btn = document.getElementById("submitReportBtn"); btn.disabled = true; btn.innerText = "در حال ارسال...";
+            let btn = document.getElementById("submitReportBtn"); btn.disabled = true; btn.innerText = "در حال ارسال به هسته...";
             try {
                 let courses = [];
                 document.querySelectorAll(".course-box").forEach(box => {
                     let edu = parseFloat(box.querySelector(".c-edu").value) || 0; let std = parseFloat(box.querySelector(".c-std").value) || 0; let tst = parseInt(box.querySelector(".c-tst").value) || 0;
                     if(edu>0 || std>0 || tst>0) courses.push({ name: box.querySelector(".c-name").value, edu: edu, study: std, tests: tst });
                 });
-                if(courses.length === 0) throw new Error("حداقل اطلاعات یک درس را وارد کنید!");
+                if(courses.length === 0) throw new Error("حداقل اطلاعات یک درس را برای ارسال وارد کنید.");
                 
                 await dbRequest('daily_reports', 'POST', [{
                     student_id: currentUser.id, report_date_shamsi: selectedDate, courses_data: courses,
                     sleep_last_night: document.getElementById("v_sleepLast").innerText, wake_today: document.getElementById("v_wakeToday").innerText,
-                    nap_hours: parseFloat(document.getElementById("life_nap").value) || 0, phone_hours: parseFloat(document.getElementById("life_phone").value) || 0, mood: document.getElementById("life_mood").value
+                    nap_hours: parseFloat(document.getElementById("v_nap").innerText) || 0, phone_hours: parseFloat(document.getElementById("v_phone").innerText) || 0, mood: document.getElementById("life_mood").value
                 }]);
                 showScreen('successScreen');
-            } catch(e) { alert("خطا: " + e.message); btn.disabled = false; btn.innerText = "🚀 ثبت نهایی در هسته"; }
+            } catch(e) { alert("خطا: " + e.message); }
+            btn.disabled = false; btn.innerText = "🚀 ثبت نهایی در هسته";
         }
     </script>
 </body>
