@@ -7,40 +7,29 @@
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
     
     <style>
-        :root { 
-            --pink: #d97b7b; --pink-light: #fbecec; --pink-dark: #b85c5c;
-            --green: #7ca881; --green-light: #e5eee6; 
-            --yellow: #fca311; --blue: #4ea8de; 
-            --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; 
-            --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); 
-        }
+        /* (همان استایل‌های قبلی) */
+        :root { --pink: #d97b7b; --pink-light: #fbecec; --pink-dark: #b85c5c; --green: #7ca881; --green-light: #e5eee6; --yellow: #fca311; --blue: #4ea8de; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); }
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; background-image: radial-gradient(var(--green-light) 2px, transparent 2px); background-size: 25px 25px; }
-        
         .container { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; width: 100%; max-width: 550px; box-shadow: var(--shadow); border: 2px solid var(--white); display: none; margin-bottom: 20px; animation: fadeIn 0.4s ease-in-out;}
         .active-screen { display: block !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .logo-box { text-align: center; margin-bottom: 15px; font-size: 55px; line-height: 1;}
         h1 { text-align: center; font-size: 24px; margin-bottom: 5px; color: var(--text-dark); font-weight: 900;}
         .subtitle { text-align: center; color: var(--green); font-size: 14px; margin-bottom: 25px; font-weight: bold;}
         .section-title { color: var(--white); background: var(--pink); padding: 8px 15px; border-radius: 12px; font-size: 14px; margin: 25px 0 15px 0; display: inline-block; font-weight: bold; }
-        
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: bold; }
         input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--green-light); background: #fafbfc; font-size: 15px; font-weight: bold; transition: 0.3s; outline: none;}
         input:focus, textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 4px var(--pink-light); }
-        
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn:active { transform: scale(0.96); }
         .btn-primary { background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: var(--white); box-shadow: 0 6px 20px rgba(217, 123, 123, 0.4); }
         .btn-outline { background: var(--white); color: var(--text-dark); border: 2px dashed #ccc; }
-        
         .menu-card { background: var(--white); border: 2px solid var(--green-light); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
         .menu-card:hover { border-color: var(--pink); transform: translateY(-3px); }
         .menu-icon { font-size: 35px; display: block; }
         
-        /* استایل اسلایدرهای زمانی */
         .time-slider-box { background: #fdfdfd; border: 2px solid var(--green-light); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         .time-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
         .time-badge { background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
@@ -48,8 +37,6 @@
         input[type="range"]:focus { outline: none; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #e0e8e1; border-radius: 10px; }
         input[type="range"]::-webkit-slider-thumb { border: 3px solid var(--white); height: 24px; width: 24px; border-radius: 50%; background: var(--pink); cursor: pointer; -webkit-appearance: none; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-
-        /* دکمه‌های ارزیابی دروس */
         .eval-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #eee; }
         .eval-subj-name { font-weight: 900; font-size: 14px; color: var(--text-dark); }
         .btn-group { display: flex; gap: 5px; background: #f0f0f0; padding: 4px; border-radius: 12px;}
@@ -57,15 +44,10 @@
         .btn-eval.active[data-val="weak"] { background: #ffeded; color: #d9534f; box-shadow: 0 2px 5px rgba(217,83,79,0.2);}
         .btn-eval.active[data-val="normal"] { background: var(--white); color: var(--text-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
         .btn-eval.active[data-val="strong"] { background: var(--green-light); color: var(--green); box-shadow: 0 2px 5px rgba(124,168,129,0.2);}
-
-        /* روزهای دایره‌ای */
         .days-wrapper { display: flex; justify-content: space-between; margin-bottom: 15px; direction: rtl;}
         .day-circle { width: 38px; height: 38px; border-radius: 50%; background: #f0f0f0; color: #666; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 2px solid transparent;}
         .day-circle.selected { background: var(--pink); color: var(--white); transform: scale(1.1); box-shadow: 0 4px 10px rgba(217,123,123,0.3);}
-        
         .fixed-class-box { background: var(--white); border: 2px solid var(--blue); padding: 15px; border-radius: 16px; margin-bottom: 15px; position: relative;}
-        
-        /* تقویم گرافیکی */
         .schedule-day { background: var(--white); border: 2px solid var(--blue); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
         .s-day-header { background: #e3f2fd; color: #1c5b82; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between;}
         .s-block { display: flex; align-items: stretch; border-bottom: 1px solid #f0f0f0; }
@@ -77,7 +59,6 @@
         .bg-general { background-color: #fffdf5; color: #b5740a; border-right: 4px solid var(--yellow); }
         .bg-fixed { background-color: #f8f9fa; color: #444; border-right: 4px solid #adb5bd; }
         .bg-break { background-color: var(--green-light); color: var(--green); border-right: 4px solid var(--green); padding: 10px 15px !important; display: flex; align-items: center;}
-        
         .loader { text-align: center; color: var(--pink); font-weight: bold; font-size: 14px; margin-top: 10px; display: none;}
     </style>
 </head>
@@ -95,7 +76,6 @@
     <div class="container" id="homeMenu">
         <div class="logo-box">🏠</div>
         <h1 id="userNameDisplay">خوش آمدی</h1><p class="subtitle" id="userGradeDisplay" style="margin-bottom: 25px;"></p>
-
         <div class="menu-card" onclick="initPlannerSequence()" style="border-color: var(--blue); background: #f0f8ff;">
             <span class="menu-icon">🎯</span>
             <h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color: #666; font-size:13px;">تقویم اختصاصی هفته شما</p>
@@ -141,6 +121,19 @@
         <div id="aiLoader" class="loader">هسته هوشمند در حال پردازش هزاران حالت... 🧠</div>
     </div>
 
+    <div class="container" id="pendingApprovalScreen">
+        <div class="logo-box" style="font-size: 70px;">⏳</div>
+        <h1 style="color:var(--blue);">برنامه در صف بررسی</h1>
+        <p class="subtitle" style="margin-top:10px; line-height:1.8;">
+            هوش مصنوعی برنامه شما را با موفقیت چید! <br> 
+            اما این برنامه برای <strong>بررسی، اصلاح و تایید نهایی</strong> برای مشاور شما ارسال شده است.
+        </p>
+        <div style="background:#e3f2fd; padding:15px; border-radius:15px; text-align:center; font-weight:bold; color:#1c5b82; margin-bottom:20px;">
+            به محض تایید مشاور، تقویم شما همینجا نمایش داده می‌شود.
+        </div>
+        <button class="btn btn-outline" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
+    </div>
+
     <div class="container" id="scheduleScreen" style="max-width: 600px;">
         <h1 id="scheduleTitle" style="margin-bottom: 5px; color:var(--text-dark);"></h1>
         <p class="subtitle" id="scheduleStats"></p>
@@ -149,102 +142,84 @@
     </div>
 
     <script>
-        // =========================================================
-        // 🔗 اتصال به دیتابیس سوپابیس
-        // =========================================================
-        const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; // <--- تغییر دهید
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // <--- تغییر دهید
+        const SUPABASE_URL = 'https://sb_publishable_N9fmFzk2F5KOD83IYJ7iFQ_ldMsqM5q.supabase.co'; // 👈 کلید سوپابیس
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // 👈 کلید سوپابیس
+        const NEW_GAS_AI_URL = 'https://script.google.com/macros/s/AKfycbz_BoUQde5Jj3s5wlygk9QiKPmpEWxeeohwlEmFapkjTrMYJWeb1ac2fNMybnSv6dFO/exec'; // 👈 لینک اسکریپت جدید گوگل برای هوش مصنوعی
 
-        let currentUser = null; 
-        let userSubjectEvals = {}; // ذخیره موقت وضعیت دکمه‌ها
-        
+        let currentUser = null; let userSubjectEvals = {}; 
         const daysOfWeek = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
         const generalSubjects = ["فارسی", "عربی", "دینی", "زبان", "فارسی 1", "عربی 1", "دینی 1", "زبان 1", "فارسی 2", "عربی 2", "دینی 2", "زبان 2", "فارسی 3", "عربی 3", "دینی 3", "زبان 3", "سلامت و بهداشت", "هویت اجتماعی"];
         
-        // دیتابیس درونی (Fallback Syllabus)
         const syllabusRef = { 
             "دهم": { "ریاضی": ["هندسه 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "تجربی": ["زیست 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "انسانی": ["ریاضی و آمار ۱", "اقتصاد", "علوم و فنون ۱", "عربی انسانی ۱", "تاریخ ۱", "جامعه‌شناسی ۱", "منطق", "فارسی ۱", "دینی ۱", "زبان ۱"] }, 
             "یازدهم": { "ریاضی": ["حسابان 1", "هندسه 2", "آمار و احتمال", "فیزیک 2", "شیمی 2", "فارسی 2", "عربی 2", "دینی 2", "زبان 2"], "تجربی": ["زیست 2", "ریاضی 2", "فیزیک 2", "شیمی 2", "زمین‌شناسی", "فارسی 2", "عربی 2", "دینی 2", "زبان 2"], "انسانی": ["ریاضی و آمار ۲", "علوم و فنون ۲", "عربی انسانی ۲", "تاریخ ۲", "جامعه‌شناسی ۲", "فلسفه ۱", "روان‌شناسی", "فارسی ۲", "دینی ۲", "زبان ۲"] }, 
             "دوازدهم": { "ریاضی": ["حسابان 2", "ریاضیات پایه", "هندسه 3", "گسسته", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "تجربی": ["ریاضی 3", "زیست 3", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "انسانی": ["علوم و فنون ۳", "ریاضی و آمار ۳", "عربی انسانی ۳", "تاریخ ۳", "جامعه‌شناسی ۳", "جغرافیا ۳", "فلسفه ۲", "فارسی 3", "دینی 3", "زبان 3"] } 
         };
 
-        // توابع تبدیل زمان اسلایدرها (مثلا 13.5 به 13:30)
-        function formatSliderTime(val) {
-            let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00';
-            return `${h.toString().padStart(2, '0')}:${m}`;
-        }
-        function updateSliderBadge(slider, badgeId) {
-            document.getElementById(badgeId).innerText = formatSliderTime(slider.value);
-        }
-        function timeToMins(tStr) { let [h,m] = tStr.split(':').map(Number); return (h*60)+m; }
+        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
+        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
         function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`; }
 
         async function dbRequest(endpoint, method = 'GET', body = null) {
             const options = { method: method, headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }};
             if(body) options.body = JSON.stringify(body);
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-                if(!res.ok) throw new Error("Database Error");
-                return method !== 'DELETE' ? await res.json() : true;
-            } catch (e) { console.error(e); return []; } // در صورت قطعی، آرایه خالی برمی‌گرداند تا برنامه کرش نکند
+            try { const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options); if(!res.ok) throw new Error("DB Error"); return method !== 'DELETE' ? await res.json() : true; } catch (e) { return []; } 
         }
 
-        function showScreen(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen'));
-            document.getElementById(id).classList.add('active-screen');
-            window.scrollTo(0,0);
-        }
+        function showScreen(id) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0,0); }
 
         function getWeekName() {
-            // محاسبه تاریخ حدودی برای نمایش تیتر هفته
             let d = new Date(); let diff = (d.getDay() + 1) % 7; d.setDate(d.getDate() - diff - 1);
             let shamsi = new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d);
             return `برنامه هفته (از ${shamsi})`;
         }
 
-        // =========================================================
-        // منطق مسیریابی و رابط کاربری
-        // =========================================================
         async function handleLogin() {
-            let id = document.getElementById("userId").value.trim();
-            let pass = document.getElementById("userPass").value.trim();
+            let id = document.getElementById("userId").value.trim(); let pass = document.getElementById("userPass").value.trim();
             if(!id || !pass) return alert("اطلاعات را وارد کنید.");
-            
-            document.getElementById("loginBtn").disabled = true;
-            document.getElementById("loginLoader").style.display = "block";
-
+            document.getElementById("loginBtn").disabled = true; document.getElementById("loginLoader").style.display = "block";
             let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
             if(users && users.length > 0 && users[0].password === pass) {
                 currentUser = users[0];
                 document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
                 document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`;
                 showScreen('homeMenu');
-            } else {
-                alert("رمز عبور یا آیدی اشتباه است.");
-            }
-            document.getElementById("loginBtn").disabled = false;
-            document.getElementById("loginLoader").style.display = "none";
+            } else { alert("رمز عبور یا آیدی اشتباه است."); }
+            document.getElementById("loginBtn").disabled = false; document.getElementById("loginLoader").style.display = "none";
         }
 
+        // =========================================================
+        // 🌟 آپدیت مهم: بررسی وضعیت تایید مشاور
+        // =========================================================
         async function initPlannerSequence() {
             let weekName = getWeekName();
-            
-            // ۱. بررسی قفل بودن برنامه (آیا برنامه این هفته قبلا چیده شده؟)
             let schedules = await dbRequest(`weekly_schedules?student_id=eq.${currentUser.id}&week_name=eq.${encodeURIComponent(weekName)}&select=*`);
-            if(schedules && schedules.length > 0 && schedules[0].schedule_json) {
-                document.getElementById("scheduleTitle").innerText = weekName;
-                renderTimeline(schedules[0].schedule_json);
-                return;
+            
+            if(schedules && schedules.length > 0) {
+                let currentSch = schedules[0];
+                if(currentSch.status === 'در انتظار') {
+                    showScreen('pendingApprovalScreen'); // اگر تایید نشده بود
+                    return;
+                } else if (currentSch.status === 'تایید شده' && currentSch.schedule_json) {
+                    document.getElementById("scheduleTitle").innerText = weekName;
+                    
+                    // استخراج پیام‌های هوش مصنوعی (اگر به صورت آبجکت ذخیره شده باشد)
+                    let aiMsg = "", summary = "";
+                    try {
+                        let parsedFeed = JSON.parse(currentSch.ai_feedback);
+                        aiMsg = parsedFeed.msg || ""; summary = parsedFeed.sum || "";
+                    } catch(e) { aiMsg = currentSch.ai_feedback; } // حالت قدیمی
+                    
+                    renderTimeline(currentSch.schedule_json, aiMsg, summary);
+                    return;
+                }
             }
 
-            // ۲. اگر برنامه نداشت، بررسی تنظیمات اولیه (آنبوردینگ)
             let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`);
             if(evals && evals.length > 0) {
-                // آنبوردینگ قبلا انجام شده، مستقیم برو اتاق فکر
                 document.getElementById("weekNameDisplay").innerText = weekName;
                 showScreen('fridayReflectionScreen');
             } else {
-                // بار اول است
                 buildOnboardingUI();
                 showScreen('onboardingScreen');
             }
@@ -254,59 +229,39 @@
             let subjects = syllabusRef[currentUser.grade][currentUser.major] || ["عمومی"];
             let container = document.getElementById('subjectsEvalContainer');
             container.innerHTML = ""; userSubjectEvals = {};
-            
             subjects.forEach(subj => {
-                userSubjectEvals[subj] = "normal"; // پیش‌فرض
-                container.innerHTML += `
-                <div class="eval-row">
-                    <span class="eval-subj-name">${subj}</span>
-                    <div class="btn-group">
-                        <button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button>
-                        <button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button>
-                        <button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button>
-                    </div>
-                </div>`;
+                userSubjectEvals[subj] = "normal";
+                container.innerHTML += `<div class="eval-row"><span class="eval-subj-name">${subj}</span><div class="btn-group">
+                    <button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button>
+                    <button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button>
+                    <button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button>
+                </div></div>`;
             });
         }
 
         function setEval(btn) {
-            let subj = btn.getAttribute('data-subj');
-            let val = btn.getAttribute('data-val');
-            userSubjectEvals[subj] = val;
-            
-            let group = btn.parentElement;
-            group.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            let subj = btn.getAttribute('data-subj'); let val = btn.getAttribute('data-val'); userSubjectEvals[subj] = val;
+            let group = btn.parentElement; group.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); btn.classList.add('active');
         }
 
         function addFixedClassUI() {
             let id = Date.now();
-            let html = `
-            <div class="fixed-class-box" id="fc_${id}">
-                <button class="remove-btn" onclick="document.getElementById('fc_${id}').remove()">حذف</button>
+            let html = `<div class="fixed-class-box" id="fc_${id}"><button class="remove-btn" onclick="document.getElementById('fc_${id}').remove()" style="position:absolute;top:10px;left:10px;background:#ffeded;color:#d9534f;border:none;padding:5px 10px;border-radius:8px;">حذف</button>
                 <div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس (مثلاً کلاس فیزیک)"></div>
-                <div class="days-wrapper">
-                    ${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}
-                </div>
+                <div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <span style="font-size:12px; font-weight:bold;">از</span>
                     <div style="flex:1;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge" style="text-align:center;">16:00</div></div>
                     <span style="font-size:12px; font-weight:bold;">تا</span>
                     <div style="flex:1;"><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge" style="text-align:center; background:var(--pink-light); color:var(--pink);">18:00</div></div>
-                </div>
-            </div>`;
+                </div></div>`;
             document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', html);
         }
 
         async function saveOnboardingData() {
-            let btn = document.getElementById("btnSaveOnboarding");
-            document.getElementById("onboardingLoader").style.display = "block"; btn.disabled = true;
-
-            let lunch = formatSliderTime(document.getElementById('sliderLunch').value);
-            let dinner = formatSliderTime(document.getElementById('sliderDinner').value);
+            let btn = document.getElementById("btnSaveOnboarding"); document.getElementById("onboardingLoader").style.display = "block"; btn.disabled = true;
+            let lunch = formatSliderTime(document.getElementById('sliderLunch').value); let dinner = formatSliderTime(document.getElementById('sliderDinner').value);
             currentUser.lunch_time = lunch; currentUser.dinner_time = dinner;
-            
-            // ذخیره بدون معطلی برای کاربر (حتی اگر دیتابیس قطعی داشت، در استیت مرورگر می‌ماند)
             await dbRequest(`students?id=eq.${currentUser.id}`, 'PATCH', { lunch_time: lunch, dinner_time: dinner });
             
             let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] }));
@@ -316,8 +271,7 @@
             document.querySelectorAll('.fixed-class-box').forEach(box => {
                 let name = box.querySelector('.fc-name').value;
                 let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val')));
-                let start = formatSliderTime(box.querySelector('.fc-start-s').value);
-                let end = formatSliderTime(box.querySelector('.fc-end-s').value);
+                let start = formatSliderTime(box.querySelector('.fc-start-s').value); let end = formatSliderTime(box.querySelector('.fc-end-s').value);
                 if(name && days.length > 0) classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: start, end_time: end });
             });
             if(classes.length > 0) await dbRequest('fixed_classes', 'POST', classes);
@@ -328,108 +282,68 @@
         }
 
         // =========================================================
-        // موتور قدرتمند Time-Blocking (نسخه تکامل‌یافته)
-        // =========================================================
-// 🔗 لینک اسکریپت جدیدِ گوگل که مخصوص هوش مصنوعی ساختی رو اینجا بذار
-        const NEW_GAS_AI_URL = 'https://script.google.com/macros/s/AKfycbz_BoUQde5Jj3s5wlygk9QiKPmpEWxeeohwlEmFapkjTrMYJWeb1ac2fNMybnSv6dFO/exec';
-
-        // =========================================================
-        // واگذاری کامل تولید تقویم به جمینای
+        // 🌟 آپدیت: درخواست از جمینای و ارسال به داشبورد ادمین
         // =========================================================
         async function triggerAIGeneration() {
-            let btn = document.getElementById("btnGenerateAI");
-            let loader = document.getElementById("aiLoader");
+            let btn = document.getElementById("btnGenerateAI"); let loader = document.getElementById("aiLoader");
             btn.disabled = true; loader.style.display = "block";
 
             try {
                 loader.innerText = "در حال جمع‌آوری اطلاعات برای جمینای... 📦";
-                
-                // دریافت دیتای کاربر از دیتابیس
                 let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || [];
                 let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || [];
                 let reflection = document.getElementById("aiPromptText").value.trim();
                 let masterSyllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
-                
                 if(evals.length === 0) evals = Object.keys(userSubjectEvals).map(s => ({subject_name: s, eval_level: userSubjectEvals[s]}));
 
-                let aiPayload = {
-                    grade: currentUser.grade,
-                    major: currentUser.major,
-                    lunchTime: currentUser.lunch_time,
-                    dinnerTime: currentUser.dinner_time,
-                    evals: evals,
-                    fixedClasses: fixedClasses,
-                    reflection: reflection,
-                    syllabus: masterSyllabus
-                };
+                let aiPayload = { grade: currentUser.grade, major: currentUser.major, lunchTime: currentUser.lunch_time, dinnerTime: currentUser.dinner_time, evals: evals, fixedClasses: fixedClasses, reflection: reflection, syllabus: masterSyllabus };
 
                 loader.innerText = "جمینای در حال چیدن تقویم و محاسبه زمان‌ها... 🧠⏳";
-                
-                // ارسال مستقیم به اسکریپت جدید
-                const aiResponse = await fetch(NEW_GAS_AI_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ data: aiPayload }),
-                    redirect: "follow"
-                });
-                
-                // ... (کدهای قبلی درون triggerAIGeneration) ...
+                const aiResponse = await fetch(NEW_GAS_AI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ data: aiPayload }), redirect: "follow" });
                 const aiData = await aiResponse.json();
                 
                 if(aiData.status !== "Success") throw new Error(aiData.message);
 
                 let generatedSchedule = aiData.result.schedule;
                 let aiMessage = aiData.result.aiMessage;
-                let summary = aiData.result.generalSummary; // 👈 گرفتن توضیح کلی
+                let summary = aiData.result.generalSummary;
                 let weekName = getWeekName();
                 
-                loader.innerText = "در حال ذخیره در دیتابیس... 💾";
+                loader.innerText = "در حال ارسال به اتاق فرمان برای تایید مشاور... 🚀";
 
-                // ذخیره در سوپابیس (فیلد ai_feedback را ترکیب می‌کنیم یا در فیلد جدید می‌ریزیم)
+                // 🌟 ذخیره در دیتابیس با وضعیت "در انتظار"
                 await dbRequest('weekly_schedules', 'POST', [{
                     student_id: currentUser.id, 
                     week_name: weekName, 
                     student_reflection: reflection,
-                    ai_feedback: JSON.stringify({ msg: aiMessage, sum: summary }), // 👈 ذخیره هر دو متن
+                    ai_feedback: JSON.stringify({ msg: aiMessage, sum: summary }), 
                     schedule_json: generatedSchedule, 
-                    status: 'تکمیل شده'
+                    status: 'در انتظار'
                 }]);
 
-                document.getElementById("scheduleTitle").innerText = weekName;
-                renderTimeline(generatedSchedule, aiMessage, summary); // 👈 پاس دادن به رندر
-// ... (بقیه کدها) ...
+                // به جای رندر کردن، می‌ره تو صفحه انتظار
+                showScreen('pendingApprovalScreen');
 
-            } catch(e) { 
-                alert("خطا در پردازش هوشمند: " + e.message); 
-            }
+            } catch(e) { alert("خطا در پردازش هوشمند: " + e.message); }
             
             btn.disabled = false; loader.style.display = "none";
-            loader.innerText = "هسته هوشمند در حال پردازش هزاران حالت... 🧠"; // ریست کردن متن
+            loader.innerText = "هسته هوشمند در حال پردازش هزاران حالت... 🧠";
         }
-        // اضافه کردن آرگومان summary به ورودی تابع
-function renderTimeline(schedule, aiMessage = "", summary = "") {
-    let container = document.getElementById('timelineContainer');
-    container.innerHTML = ""; let totalMins = 0;
 
-    // باکس پیام کوتاه
-    if(aiMessage) {
-        container.innerHTML += `
-        <div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; line-height:1.8;">
-            <strong style="color:#b5740a;">پیام مشاور هوشمند تو:</strong><br>
-            <span style="font-size:14px; font-weight:bold; color:var(--text-dark);">${aiMessage}</span>
-        </div>`;
-    }
+        // =========================================================
+        // رندر نهایی تقویم (فقط وقتی تایید شده باشد اجرا می‌شود)
+        // =========================================================
+        function renderTimeline(schedule, aiMessage = "", summary = "") {
+            let container = document.getElementById('timelineContainer');
+            container.innerHTML = ""; let totalMins = 0;
 
-    // باکس تحلیل و استراتژی کلی هفته
-    if(summary) {
-        container.innerHTML += `
-        <div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; line-height:1.8;">
-            <strong style="color:#1c5b82;">📊 استراتژی کلی این هفته:</strong><br>
-            <span style="font-size:13px; font-weight:bold; color:var(--text-dark);">${summary}</span>
-        </div>`;
-    }
+            if(aiMessage) {
+                container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; line-height:1.8;"><strong style="color:#b5740a;">پیام مشاور هوشمند تو:</strong><br><span style="font-size:14px; font-weight:bold; color:var(--text-dark);">${aiMessage}</span></div>`;
+            }
+            if(summary) {
+                container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; line-height:1.8;"><strong style="color:#1c5b82;">📊 استراتژی کلی این هفته:</strong><br><span style="font-size:13px; font-weight:bold; color:var(--text-dark);">${summary}</span></div>`;
+            }
 
-    // ... (ادامه کدهای رندر کردن schedule که دست نمی‌خورد) ...
             schedule.forEach((day, i) => {
                 let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`;
                 day.forEach(b => {
@@ -437,11 +351,8 @@ function renderTimeline(schedule, aiMessage = "", summary = "") {
                     if(b.type === 'study') {
                         totalMins += (b.end - b.start);
                         let css = b.isGen ? 'bg-general' : 'bg-specific';
-                        html += `<div class="s-block"><div class="s-time">${time}</div>
-                        <div class="s-content ${css}">
-                            <div class="s-title">📘 ${b.title}</div>
-                            <div class="s-details">مبحث: ${b.topic} <br> 🎯 هدف‌گذاری: ${b.tests} تست</div>
-                        </div></div>`;
+                        let details = b.topic ? `مبحث: ${b.topic} <br> 🎯 هدف‌گذاری: ${b.tests || 0} تست` : "";
+                        html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content ${css}"><div class="s-title">📘 ${b.title}</div><div class="s-details">${details}</div></div></div>`;
                     }
                     else if(b.type === 'break') html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content bg-break"><strong>${b.title}</strong></div></div>`;
                     else if(b.type === 'fixed') html += `<div class="s-block"><div class="s-time">${time}</div><div class="s-content bg-fixed"><strong>${b.title}</strong></div></div>`;
@@ -449,7 +360,7 @@ function renderTimeline(schedule, aiMessage = "", summary = "") {
                 html += `</div>`; container.innerHTML += html;
             });
 
-            document.getElementById('scheduleStats').innerText = `✅ تقویم اختصاصی تنظیم و قفل شد. مجموع زمان مطالعه خالص: ${Math.floor(totalMins/60)} ساعت.`;
+            document.getElementById('scheduleStats').innerText = `✅ تقویم قفل شد. زمان مطالعه خالص: ${Math.floor(totalMins/60)} ساعت.`;
             showScreen('scheduleScreen');
         }
     </script>
