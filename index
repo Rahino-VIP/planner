@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موتور برنامه‌ریز هوشمند راهینو</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* استفاده از استایل‌های زیبای خودت */
+        :root { --pink: #d97b7b; --pink-light: #fbecec; --green: #7ca881; --green-light: #e5eee6; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; }
+        * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+        .container { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; width: 100%; max-width: 450px; border: 2px solid var(--white); box-shadow: 0 8px 25px rgba(124, 168, 129, 0.25);}
+        h1 { text-align: center; font-size: 24px; margin-bottom: 5px; font-weight: 900; color: var(--text-dark);}
+        .subtitle { text-align: center; color: var(--green); font-size: 14px; margin-bottom: 25px; font-weight: bold;}
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: bold; }
+        input[type="number"], select { width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--green-light); font-size: 15px; font-weight: bold; }
+        .btn-primary { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; background: linear-gradient(135deg, var(--pink), #c76565); color: var(--white); margin-top: 10px; }
+        .schedule-box { background: #fdfdfd; border: 2px solid var(--pink-light); padding: 15px; border-radius: 15px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>هسته برنامه‌ریزی قطب‌نما</h1>
+        <p class="subtitle">نسخه آزمایشی (MVP)</p>
+
+        <div class="input-group">
+            <label>ساعت‌های خالی این هفته (به ساعت):</label>
+            <input type="number" id="freeTimeHours" placeholder="مثلاً: 40" value="40">
+        </div>
+
+        <div class="input-group">
+            <label>درس‌هایی که در آن ضعیف هستی:</label>
+            <select id="weakSubjects" multiple style="height: 80px;">
+                <option value="فیزیک ۳" selected>فیزیک ۳</option>
+                <option value="ریاضی ۳" selected>ریاضی ۳</option>
+                <option value="شیمی ۳">شیمی ۳</option>
+                <option value="زیست‌شناسی ۳">زیست‌شناسی ۳</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>درس‌هایی که در آن قوی هستی:</label>
+            <select id="strongSubjects" multiple style="height: 80px;">
+                <option value="دین و زندگی ۳" selected>دین و زندگی ۳</option>
+                <option value="فارسی ۳">فارسی ۳</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" id="btnGenerate" onclick="runAI()">تولید برنامه هوشمند 🚀</button>
+        
+        <div id="outputArea" style="margin-top: 25px;"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ۱. اتصال مستقیم به سوپابیس (Supabase)
+        // ==========================================
+        const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co'; // <--- آدرس خودت را اینجا بذار
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5...'; // <--- کلید anon خودت را اینجا بذار
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ==========================================
+        // ۲. موتور هوش مصنوعی راهینو (AI Core)
+        // ==========================================
+        function generateSmartSchedule(studentProfile, syllabusData) {
+            const { availableMinutes, weakSubjects, strongSubjects } = studentProfile;
+            let totalNeededMinutes = 0;
+            
+            let weightedSyllabus = syllabusData.map(topic => {
+                let weight = 1.0;
+                if (weakSubjects.includes(topic.subject)) weight = 1.5;
+                else if (strongSubjects.includes(topic.subject)) weight = 0.7;
+                
+                let adjustedTime = topic.standard_time_minutes * weight;
+                totalNeededMinutes += adjustedTime;
+                return { ...topic, adjustedTime: adjustedTime };
+            });
+
+            let finalSchedule = [];
+            weightedSyllabus.forEach(topic => {
+                let finalTime = Math.floor((topic.adjustedTime / totalNeededMinutes) * availableMinutes);
+                let chunkCount = Math.ceil(finalTime / 90);
+                
+                for(let i = 0; i < chunkCount; i++) {
+                    let duration = (i === chunkCount - 1 && finalTime % 90 !== 0) ? (finalTime % 90) : 90;
+                    if(duration > 0) {
+                        finalSchedule.push({
+                            subject: topic.subject,
+                            topic_name: topic.topic_name,
+                            duration_minutes: duration
+                        });
+                    }
+                }
+            });
+            return finalSchedule;
+        }
+
+        // ==========================================
+        // ۳. اجرای عملیات با کلیک روی دکمه
+        // ==========================================
+        async function runAI() {
+            let btn = document.getElementById('btnGenerate');
+            let output = document.getElementById('outputArea');
+            btn.innerText = "در حال خواندن از دیتابیس...";
+            btn.disabled = true;
+
+            try {
+                // الف) گرفتن اطلاعات فرم
+                let hours = parseInt(document.getElementById('freeTimeHours').value) || 40;
+                let profile = {
+                    availableMinutes: hours * 60,
+                    weakSubjects: Array.from(document.getElementById('weakSubjects').selectedOptions).map(o => o.value),
+                    strongSubjects: Array.from(document.getElementById('strongSubjects').selectedOptions).map(o => o.value)
+                };
+
+                // ب) خواندنِ برنامه راهبردی ۱۸ مهر از سوپابیس
+                const { data: syllabus, error } = await supabase
+                    .from('master_syllabus')
+                    .select('*')
+                    .eq('exam_date_shamsi', '1403/07/18');
+
+                if (error) throw error;
+
+                btn.innerText = "در حال پردازش پارت‌ها...";
+
+                // ج) اجرای الگوریتم هوش مصنوعی
+                let generatedChunks = generateSmartSchedule(profile, syllabus);
+
+                // د) نمایش گرافیکی نتیجه روی صفحه
+                output.innerHTML = `<h3 style="color:var(--pink); text-align:center;">برنامه شخصی‌سازی شده شما:</h3>
+                                    <p style="text-align:center; font-size:12px; margin-bottom:15px;">سیستم ${generatedChunks.length} پارت مطالعاتی برای شما تولید کرد.</p>`;
+                
+                generatedChunks.forEach((chunk, index) => {
+                    output.innerHTML += `
+                    <div class="schedule-box">
+                        <strong>پارت ${index + 1}: ${chunk.subject}</strong><br>
+                        <small style="color:var(--text-dark);">مبحث: ${chunk.topic_name}</small><br>
+                        <span style="color:var(--green); font-weight:bold; float:left;">${chunk.duration_minutes} دقیقه</span>
+                        <div style="clear:both;"></div>
+                    </div>`;
+                });
+
+                btn.innerText = "تولید برنامه هوشمند 🚀";
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error(err);
+                alert("خطا در ارتباط با سوپابیس! آیا کلیدها را درست وارد کردی؟");
+                btn.innerText = "تلاش مجدد";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
