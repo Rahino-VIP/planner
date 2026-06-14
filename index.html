@@ -189,66 +189,71 @@
 
         // توابع کمکی
         async function dbRequest(endpoint, method = 'GET', body = null) {
-            const options = { method: method, headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }};
+            // حذف اسلش اضافه در انتهای لینک (اگر اشتباهی گذاشته باشی)
+            let cleanUrl = SUPABASE_URL.endsWith('/') ? SUPABASE_URL.slice(0, -1) : SUPABASE_URL;
+            
+            const options = { 
+                method: method, 
+                headers: { 
+                    'apikey': SUPABASE_KEY, 
+                    'Authorization': `Bearer ${SUPABASE_KEY}`, 
+                    'Content-Type': 'application/json', 
+                    'Prefer': 'return=representation' 
+                }
+            };
             if(body) options.body = JSON.stringify(body);
-            try { const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options); if(!res.ok) throw new Error("DB Error"); return method !== 'DELETE' ? await res.json() : true; } catch (e) { return []; } 
+            
+            try { 
+                const res = await fetch(`${cleanUrl}/rest/v1/${endpoint}`, options); 
+                
+                // اگر سوپابیس ارور بده، دقیقاً پیام ارورش رو می‌گیریم و روی صفحه نشون می‌دیم
+                if(!res.ok) {
+                    const errorText = await res.text();
+                    alert("🚨 سوپابیس ارور داد: " + errorText);
+                    throw new Error("Supabase Error");
+                }
+                
+                return method !== 'DELETE' ? await res.json() : true; 
+            } catch (e) { 
+                console.error("ارور شبکه:", e);
+                // اینجا به جای آرایه خالی، null می‌فرستیم که سیستم بفهمه کلاً ارتباط قطع شده
+                return null; 
+            } 
         }
 
-        function showScreen(id) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0,0); }
-        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
-        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
-        function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`; }
-        function updateTimeLabel(val, labelId) { let h = Math.floor(val); let m = (val - h) * 60; if(h>=24) h-=24; document.getElementById(labelId).innerText = (h<10?'0'+h:h) + ':' + (m===0?'00':'30'); }
-        function setMood(elem, val) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); elem.classList.add('active'); document.getElementById("life_mood").value = val; }
-        
-        function getWeekName() {
-            let d = new Date(); let diff = (d.getDay() + 1) % 7; d.setDate(d.getDate() - diff - 1);
-            return `برنامه هفته (از ${new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d)})`;
-        }
-
-        // ==========================================
-        // 1. ورود و احراز هویت
-        // ==========================================
         async function handleLogin() {
-    // ۱. استفاده از trim برای حذف فاصله‌های تصادفی
-    let id = document.getElementById("userId").value.trim(); 
-    let pass = document.getElementById("userPass").value.trim();
-    
-    if(!id || !pass) {
-        return alert("لطفاً آیدی و رمز عبور را وارد کنید.");
-    }
-
-    document.getElementById("loginBtn").disabled = true; 
-    document.getElementById("loginLoader").style.display = "block";
-    
-    try {
-        // دریافت اطلاعات از سوپابیس
-        let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
-        
-        // 💡 این خط رو گذاشتم تا تو کنسول مرورگرت ببینی دیتابیس چی برگردونده
-        console.log("جواب دیتابیس: ", users);
-
-        if (users && users.length > 0) {
-            // کاربر پیدا شد، حالا چِک کردن رمز عبور
-            if (users[0].password === pass) {
-                currentUser = users[0]; 
-                document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
-                document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; 
-                showScreen('homeMenu');
-            } else {
-                alert("رمز عبور اشتباه است.");
+            let id = document.getElementById("userId").value.trim(); 
+            let pass = document.getElementById("userPass").value.trim();
+            if(!id || !pass) return alert("اطلاعات را وارد کنید.");
+            
+            document.getElementById("loginBtn").disabled = true; 
+            document.getElementById("loginLoader").style.display = "block";
+            
+            let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
+            
+            // اگر ارتباط کلا قطع شده بود (مثلا مشکل لینک)
+            if (users === null) {
+                alert("❌ ارتباط با دیتابیس برقرار نشد. لینک و کلید سوپابیس را چک کن.");
+            } 
+            // اگر ارتباط وصل شد ولی کسی رو پیدا نکرد
+            else if (users.length === 0) {
+                alert("⚠️ ارتباط وصل شد، اما آیدی " + id + " در دیتابیس وجود ندارد!");
             }
-        } else {
-            // کاربر پیدا نشد (یا دیتابیس قفل است)
-            alert("آیدی یافت نشد! اگر مطمئنی آیدی درسته، پس قفل امنیتی دیتابیس (RLS) روشنه.");
+            // اگر کاربر پیدا شد
+            else if(users.length > 0) {
+                if (users[0].password === pass) {
+                    currentUser = users[0]; 
+                    document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
+                    document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; 
+                    showScreen('homeMenu');
+                } else {
+                    alert("🔑 رمز عبور اشتباه است.");
+                }
+            }
+            
+            document.getElementById("loginBtn").disabled = false; 
+            document.getElementById("loginLoader").style.display = "none";
         }
-    } catch(err) {
-        alert("خطا در ارتباط با سرور!");
-    }
-    
-    document.getElementById("loginBtn").disabled = false; 
-    document.getElementById("loginLoader").style.display = "none";
-}
         // ==========================================
         // 2. منطق برنامه‌ریز و هوش مصنوعی
         // ==========================================
