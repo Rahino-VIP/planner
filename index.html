@@ -25,7 +25,6 @@
         .subtitle { text-align: center; color: var(--green); font-size: 14px; font-weight: bold; margin-bottom: 25px; }
         .section-title { color: var(--white); background: var(--pink); padding: 8px 15px; border-radius: 12px; font-size: 15px; margin: 25px 0 15px 0; display: inline-block; font-weight: bold; box-shadow: 0 4px 10px rgba(217, 123, 123, 0.3); }
         
-        /* استایل اسلایدرهای جذاب (مشابه فایل اصلی شما) */
         .slider-frame { background: var(--white); border: 2px solid var(--green-light); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.03); }
         .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
         .val-badge { display: inline-block; background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
@@ -34,7 +33,6 @@
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 12px; cursor: pointer; background: #e0e8e1; border-radius: 10px; border: 1px solid #c2d4c4; }
         input[type="range"]::-webkit-slider-thumb { border: 3px solid var(--white); height: 28px; width: 28px; border-radius: 50%; background: var(--pink); cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 3px 6px rgba(0,0,0,0.3); }
 
-        /* استایل دراپ‌داون‌ها */
         .select-group { display: flex; flex-direction: column; gap: 15px; }
         .select-box label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); }
         .select-box select { width: 100%; padding: 12px; border-radius: 14px; border: 2px solid var(--green-light); font-size: 15px; font-weight: bold; height: 110px; background: #fafbfc; outline: none; transition: 0.3s;}
@@ -44,7 +42,6 @@
         .btn-primary:active { transform: scale(0.96); }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
 
-        /* استایل خروجی برنامه */
         #outputArea { display: none; }
         .schedule-day-card { background: var(--white); border: 2px solid var(--blue); border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(78, 168, 222, 0.1); overflow: hidden; }
         .day-header { background: var(--blue-light); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--blue); }
@@ -64,7 +61,6 @@
 <body>
 
     <div class="main-container">
-        
         <div class="card" id="inputSection">
             <div style="text-align: center; font-size: 50px; margin-bottom: 10px;">🧭</div>
             <h1>قطب‌نمای هوشمند</h1>
@@ -93,7 +89,7 @@
                 <input type="range" id="day_4" min="0" max="15" step="0.5" value="5" oninput="document.getElementById('v_day4').innerText = this.value + ' ساعت'">
             </div>
             <div class="slider-frame" style="border-color: var(--pink-light); background: #fffdf5;">
-                <div class="slider-header"><label style="color: var(--pink);">پنجشنبه (جبرانی/مرور)</label><span class="val-badge" id="v_day5" style="background: var(--pink-light); color: var(--pink);">8 ساعت</span></div>
+                <div class="slider-header"><label style="color: var(--pink);">پنجشنبه (جبرانی)</label><span class="val-badge" id="v_day5" style="background: var(--pink-light); color: var(--pink);">8 ساعت</span></div>
                 <input type="range" id="day_5" min="0" max="15" step="0.5" value="8" oninput="document.getElementById('v_day5').innerText = this.value + ' ساعت'">
             </div>
             <div class="slider-frame" style="border-color: var(--pink-light); background: #fffdf5;">
@@ -139,20 +135,13 @@
     </div>
 
     <script>
-        // ==========================================
-        // ۱. تنظیمات اتصال امن به سوپابیس (Native REST)
-        // ==========================================
         const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY';
         const daysOfWeek = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
 
-        // ==========================================
-        // ۲. هسته الگوریتم هوش مصنوعی (AI Engine)
-        // ==========================================
         function runAIEngine(dailyCapacities, weakSubjects, strongSubjects, syllabusData) {
             let totalAvailableMinutes = dailyCapacities.reduce((a, b) => a + b, 0);
             
-            // وزن‌دهی به دروس بر اساس نقاط ضعف و قوت
             let totalNeededMinutes = 0;
             let weightedSyllabus = syllabusData.map(topic => {
                 let weight = 1.0;
@@ -164,25 +153,22 @@
                 return { ...topic, adjustedTime: adjustedTime };
             });
 
-            // خرد کردن مباحث به پارت‌های مطالعاتی (Chunks)
             let allChunks = [];
             weightedSyllabus.forEach(topic => {
                 let finalTime = Math.floor((topic.adjustedTime / totalNeededMinutes) * totalAvailableMinutes);
-                let chunkCount = Math.ceil(finalTime / 90); // پارت‌های استاندارد 90 دقیقه‌ای
+                let chunkCount = Math.ceil(finalTime / 90); 
                 
                 for(let i = 0; i < chunkCount; i++) {
                     let duration = (i === chunkCount - 1 && finalTime % 90 !== 0) ? (finalTime % 90) : 90;
-                    if(duration >= 30) { // فیلتر کردن پارت‌های خیلی کوتاه
+                    if(duration >= 30) { 
                         allChunks.push({ subject: topic.subject, topic_name: topic.topic_name, duration: duration });
                     }
                 }
             });
 
-            // توزیع هوشمند پارت‌ها در روزهای هفته (Interleaving & Capacity Planning)
             let weeklySchedule = [ [], [], [], [], [], [], [] ]; 
             let currentDayIndex = 0;
 
-            // شافل (بُر زدن) پارت‌ها برای جلوگیری از تکرار یک درس در یک روز
             allChunks.sort(() => Math.random() - 0.5); 
 
             allChunks.forEach(chunk => {
@@ -193,7 +179,7 @@
                     
                     if (usedInThisDay + chunk.duration <= dayCapacity) {
                         weeklySchedule[checkDay].push(chunk);
-                        currentDayIndex = checkDay; // شیفت به روز بعد برای تعادل
+                        currentDayIndex = checkDay; 
                         break;
                     }
                 }
@@ -202,9 +188,6 @@
             return weeklySchedule;
         }
 
-        // ==========================================
-        // ۳. کنترلر اصلی (ارتباط با بک‌اند و رندر UI)
-        // ==========================================
         async function processAI() {
             const btn = document.getElementById('btnGenerate');
             const loader = document.getElementById('loadingText');
@@ -216,18 +199,17 @@
             loader.style.display = 'block';
 
             try {
-                // الف) جمع‌آوری اطلاعات از رابط کاربری
                 let dailyCapacities = [];
                 for(let i=0; i<7; i++) {
                     let hours = parseFloat(document.getElementById('day_'+i).value) || 0;
-                    dailyCapacities.push(hours * 60); // تبدیل به دقیقه
+                    dailyCapacities.push(hours * 60); 
                 }
 
                 let weakSubjects = Array.from(document.getElementById('weakSubjects').selectedOptions).map(o => o.value);
                 let strongSubjects = Array.from(document.getElementById('strongSubjects').selectedOptions).map(o => o.value);
 
-                // ب) دریافت بودجه‌بندی خام از سوپابیس (با استفاده از fetch استاندارد و امن)
-                const apiUrl = `${SUPABASE_URL}/rest/v1/master_syllabus?exam_date_shamsi=eq.${encodeURIComponent('1403/07/18')}`;
+                // حل مشکلِ اسلش: کل جدول را می‌گیریم و با جاوااسکریپت فیلتر می‌کنیم
+                const apiUrl = `${SUPABASE_URL}/rest/v1/master_syllabus?select=*`;
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
@@ -238,13 +220,15 @@
                 });
 
                 if (!response.ok) throw new Error("ارتباط با هسته دیتابیس مسدود شده است.");
-                const syllabus = await response.json();
-                if (!syllabus || syllabus.length === 0) throw new Error("بودجه‌بندی آزمون در دیتابیس یافت نشد.");
+                const rawData = await response.json();
+                
+                // فیلتر کردن تاریخ مورد نظر در مرورگر
+                const syllabus = rawData.filter(item => item.exam_date_shamsi === '1403/07/18');
+                
+                if (!syllabus || syllabus.length === 0) throw new Error("بودجه‌بندی آزمون ۱۸ مهر در دیتابیس یافت نشد. لطفاً دیتا را بررسی کنید.");
 
-                // ج) پردازش در مغز هوش مصنوعی
                 let weeklySchedule = runAIEngine(dailyCapacities, weakSubjects, strongSubjects, syllabus);
 
-                // د) رندر کردن گرافیکی نتیجه
                 inputSection.style.display = 'none';
                 outputArea.style.display = 'block';
                 container.innerHTML = '';
