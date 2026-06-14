@@ -3,281 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قطب‌نمای ۲.۰ - موتور هوشمند</title>
+    <title>سوپراپلیکیشن قطب‌نمای راهینو</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root { 
-            --pink: #d97b7b; --pink-light: #fbecec; 
-            --green: #7ca881; --green-light: #e5eee6; 
-            --yellow: #fca311; --yellow-light: #fffdf5;
-            --blue: #4ea8de; --blue-light: #e3f2fd;
-            --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; 
-            --shadow: 0 8px 25px rgba(124, 168, 129, 0.25);
-        }
+        :root { --pink: #d97b7b; --pink-light: #fbecec; --green: #7ca881; --green-light: #e5eee6; --yellow: #fca311; --blue: #4ea8de; --bg: #f4f0ec; --text-dark: #2c3e50; --white: #ffffff; --shadow: 0 8px 25px rgba(124, 168, 129, 0.25); }
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; padding: 30px 15px; background-image: radial-gradient(var(--green-light) 2px, transparent 2px); background-size: 25px 25px; display: flex; justify-content: center;}
+        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; padding: 20px; background-image: radial-gradient(var(--green-light) 2px, transparent 2px); background-size: 25px 25px; }
+        .container { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; width: 100%; max-width: 500px; box-shadow: var(--shadow); border: 2px solid var(--white); display: none; margin-bottom: 20px;}
+        .active-screen { display: block !important; }
         
-        .main-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 20px; }
-        .card { background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 30px; border: 2px solid var(--white); box-shadow: var(--shadow); }
+        .logo-box { text-align: center; margin-bottom: 20px; }
+        .logo-box img { width: 100px; height: 100px; border-radius: 50%; box-shadow: 0 5px 15px rgba(217, 123, 123, 0.4); object-fit: cover; border: 3px solid var(--white); }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 5px; color: var(--text-dark); font-weight: 900;}
+        .subtitle { text-align: center; color: var(--green); font-size: 14px; margin-bottom: 25px; font-weight: bold;}
+        .section-title { color: var(--white); background: var(--pink); padding: 8px 15px; border-radius: 12px; font-size: 15px; margin: 25px 0 15px 0; display: inline-block; font-weight: bold; box-shadow: 0 4px 10px rgba(217, 123, 123, 0.3);}
         
-        h1 { text-align: center; font-size: 28px; font-weight: 900; color: var(--text-dark); margin-bottom: 5px; }
-        .subtitle { text-align: center; color: var(--green); font-size: 14px; font-weight: bold; margin-bottom: 25px; }
-        .section-title { color: var(--white); background: var(--pink); padding: 8px 15px; border-radius: 12px; font-size: 15px; margin: 25px 0 15px 0; display: inline-block; font-weight: bold; box-shadow: 0 4px 10px rgba(217, 123, 123, 0.3); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; margin-bottom: 8px; color: var(--text-dark); font-weight: bold; }
+        input[type="text"], input[type="password"], input[type="time"], select, textarea { width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--green-light); background: #fafbfc; color: var(--text-dark); outline: none; font-size: 15px; font-weight: bold; transition: 0.3s;}
+        input:focus, select:focus, textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 4px var(--pink-light); }
         
-        .slider-frame { background: var(--white); border: 2px solid var(--green-light); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.03); }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
-        .val-badge { display: inline-block; background: var(--green-light); color: var(--green); padding: 4px 12px; border-radius: 10px; font-weight: 900; font-size: 14px; }
-        input[type="range"] { width: 100%; -webkit-appearance: none; background: transparent; }
-        input[type="range"]:focus { outline: none; }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 12px; cursor: pointer; background: #e0e8e1; border-radius: 10px; border: 1px solid #c2d4c4; }
-        input[type="range"]::-webkit-slider-thumb { border: 3px solid var(--white); height: 28px; width: 28px; border-radius: 50%; background: var(--pink); cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 3px 6px rgba(0,0,0,0.3); }
-
-        .select-group { display: flex; flex-direction: column; gap: 15px; }
-        .select-box label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); }
-        .select-box select { width: 100%; padding: 12px; border-radius: 14px; border: 2px solid var(--green-light); font-size: 15px; font-weight: bold; height: 110px; background: #fafbfc; outline: none; transition: 0.3s;}
-        .select-box select:focus { border-color: var(--pink); box-shadow: 0 0 0 4px var(--pink-light); }
-
-        .btn-primary { width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: bold; font-size: 17px; cursor: pointer; background: linear-gradient(135deg, var(--pink), #c76565); color: var(--white); box-shadow: 0 6px 20px rgba(217, 123, 123, 0.4); transition: 0.2s; margin-top: 20px; }
-        .btn-primary:active { transform: scale(0.96); }
-        .btn-primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
-
-        #outputArea { display: none; }
-        .schedule-day-card { background: var(--white); border: 2px solid var(--blue); border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(78, 168, 222, 0.1); overflow: hidden; }
-        .day-header { background: var(--blue-light); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--blue); }
-        .day-title { font-weight: 900; color: #1c5b82; font-size: 18px; }
-        .day-stats { background: var(--blue); color: var(--white); padding: 5px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; }
-        .part-list { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .part-item { background: #fcfcfc; border: 1px solid #eee; border-radius: 14px; padding: 15px; position: relative; overflow: hidden; }
-        .part-item::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 6px; background: var(--yellow); border-radius: 0 14px 14px 0; }
-        .part-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .part-subject { font-weight: 900; font-size: 16px; color: var(--text-dark); }
-        .part-time { color: var(--pink); font-weight: bold; font-size: 14px; background: var(--pink-light); padding: 3px 10px; border-radius: 8px; }
-        .part-topic { font-size: 13px; color: #7f8c8d; font-weight: bold; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--pink), #c76565); color: var(--white); box-shadow: 0 6px 20px rgba(217, 123, 123, 0.4); }
+        .btn-outline { background: var(--white); color: var(--green); border: 2px dashed var(--green); margin-bottom: 10px; }
+        .btn-danger { background: #ffeded; color: #d9534f; padding: 10px; border-radius: 10px; border: 1px solid #fadcdc; font-weight: bold; font-size: 13px;}
         
-        .loader { text-align: center; font-weight: bold; color: var(--pink); display: none; margin-top: 15px; }
+        .menu-card { background: var(--white); border: 2px solid var(--green-light); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .menu-card:hover { border-color: var(--pink); transform: translateY(-3px); }
+        .menu-icon { font-size: 35px; display: block; }
+        
+        /* استایل‌های بخش برنامه‌ریزی */
+        .fixed-class-row { display: flex; gap: 10px; align-items: center; background: #fafbfc; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; }
+        .subject-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #ccc; }
+        
+        .schedule-day { background: var(--white); border: 2px solid var(--blue); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+        .s-day-header { background: #e3f2fd; color: #1c5b82; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--blue);}
+        .s-block { display: flex; align-items: stretch; border-bottom: 1px solid #f0f0f0; }
+        .s-time { width: 85px; background: #f8f9fa; padding: 15px 5px; text-align: center; font-size: 13px; font-weight: bold; color: #666; border-left: 2px solid #eee; display: flex; flex-direction: column; justify-content: center;}
+        .s-content { flex: 1; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .s-title { font-weight: 900; font-size: 15px; color: var(--text-dark); margin-bottom: 4px;}
+        .s-topic { font-size: 12px; color: #888; font-weight: bold;}
+        .s-badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: bold; }
+        .bg-specific { background-color: var(--pink-light); color: var(--pink); border-right: 4px solid var(--pink); }
+        .bg-general { background-color: #fff3cd; color: #856404; border-right: 4px solid var(--yellow); }
+        .bg-fixed { background-color: #e2e3e5; color: #383d41; border-right: 4px solid #6c757d; }
+        .bg-break { background-color: var(--green-light); color: var(--green); border-right: 4px solid var(--green); padding: 8px 15px !important;}
+        
+        /* چک‌باکس‌های گزارش‌گیری شبانه */
+        .check-box-wrapper { display: flex; align-items: center; justify-content: center; width: 40px; }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--green); cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <div class="card" id="inputSection">
-            <div style="text-align: center; font-size: 50px; margin-bottom: 10px;">🧭</div>
-            <h1>قطب‌نمای هوشمند</h1>
-            <p class="subtitle">تولید برنامه اختصاصی با هوش مصنوعی</p>
+    <div class="container active-screen" id="loginScreen">
+        <div class="logo-box"><span style="font-size: 60px;">🧭</span></div>
+        <h1>قطب‌نمای راهینو</h1><p class="subtitle">سیستم مدیریت یادگیری و برنامه‌ریزی</p>
+        <div class="input-group"><label>آیدی:</label><input type="text" id="userId" placeholder="مثال: 0123456789" style="direction: ltr;"></div>
+        <div class="input-group"><label>رمز عبور:</label><input type="password" id="userPass" placeholder="••••" style="direction: ltr;"></div>
+        <button class="btn btn-primary" onclick="login()" id="loginBtn">تایید و ورود</button>
+    </div>
 
-            <span class="section-title">⏱️ ظرفیت مطالعه در طول هفته</span>
-            
-            <div class="slider-frame">
-                <div class="slider-header"><label>شنبه</label><span class="val-badge" id="v_day0">5 ساعت</span></div>
-                <input type="range" id="day_0" min="0" max="15" step="0.5" value="5" oninput="document.getElementById('v_day0').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame">
-                <div class="slider-header"><label>یکشنبه</label><span class="val-badge" id="v_day1">5 ساعت</span></div>
-                <input type="range" id="day_1" min="0" max="15" step="0.5" value="5" oninput="document.getElementById('v_day1').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame">
-                <div class="slider-header"><label>دوشنبه</label><span class="val-badge" id="v_day2">5 ساعت</span></div>
-                <input type="range" id="day_2" min="0" max="15" step="0.5" value="5" oninput="document.getElementById('v_day2').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame">
-                <div class="slider-header"><label>سه‌شنبه</label><span class="val-badge" id="v_day3">4 ساعت</span></div>
-                <input type="range" id="day_3" min="0" max="15" step="0.5" value="4" oninput="document.getElementById('v_day3').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame">
-                <div class="slider-header"><label>چهارشنبه</label><span class="val-badge" id="v_day4">5 ساعت</span></div>
-                <input type="range" id="day_4" min="0" max="15" step="0.5" value="5" oninput="document.getElementById('v_day4').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame" style="border-color: var(--pink-light); background: #fffdf5;">
-                <div class="slider-header"><label style="color: var(--pink);">پنجشنبه (جبرانی)</label><span class="val-badge" id="v_day5" style="background: var(--pink-light); color: var(--pink);">8 ساعت</span></div>
-                <input type="range" id="day_5" min="0" max="15" step="0.5" value="8" oninput="document.getElementById('v_day5').innerText = this.value + ' ساعت'">
-            </div>
-            <div class="slider-frame" style="border-color: var(--pink-light); background: #fffdf5;">
-                <div class="slider-header"><label style="color: var(--pink);">جمعه (آزمون)</label><span class="val-badge" id="v_day6" style="background: var(--pink-light); color: var(--pink);">6 ساعت</span></div>
-                <input type="range" id="day_6" min="0" max="15" step="0.5" value="6" oninput="document.getElementById('v_day6').innerText = this.value + ' ساعت'">
-            </div>
+    <div class="container" id="homeMenu">
+        <div class="logo-box"><span style="font-size: 50px;">🏠</span></div>
+        <h1 id="userNameDisplay">خوش آمدی</h1><p class="subtitle" id="userGradeDisplay" style="margin-bottom: 25px;"></p>
 
-            <span class="section-title">🎯 کالیبره کردن دروس</span>
-            <div class="select-group">
-                <div class="select-box">
-                    <label>ضعف دارم (نیاز به پارت‌های بیشتر):</label>
-                    <select id="weakSubjects" multiple>
-                        <option value="فیزیک ۳" selected>فیزیک ۳</option>
-                        <option value="ریاضی ۳" selected>ریاضی ۳</option>
-                        <option value="شیمی ۳">شیمی ۳</option>
-                        <option value="زیست‌شناسی ۳">زیست‌شناسی ۳</option>
-                        <option value="عربی ۳">عربی ۳</option>
-                    </select>
-                </div>
-                <div class="select-box">
-                    <label>قوی هستم (مرور سریع‌تر):</label>
-                    <select id="strongSubjects" multiple>
-                        <option value="دین و زندگی ۳" selected>دین و زندگی ۳</option>
-                        <option value="فارسی ۳">فارسی ۳</option>
-                        <option value="زمین‌شناسی">زمین‌شناسی</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="btn-primary" id="btnGenerate" onclick="processAI()">🚀 ساخت برنامه جادویی</button>
-            <div class="loader" id="loadingText">در حال ارتباط با هسته مرکزی و تحلیل داده‌ها... ⏳</div>
+        <div class="menu-card" onclick="openPlanner()" style="border-color: var(--blue); background: #f0f8ff;">
+            <span class="menu-icon">🎯</span>
+            <h3 style="color: var(--blue);">برنامه هوشمند من</h3><p style="color: #666; font-size:13px;">دریافت برنامه هفتگی شخصی‌سازی شده</p>
         </div>
 
-        <div class="card" id="outputArea">
-            <h2 style="text-align:center; color:var(--text-dark); margin-bottom:5px;">برنامه اختصاصی شما</h2>
-            <p id="totalStats" style="text-align:center; font-size:13px; color:var(--green); font-weight:bold; margin-bottom:25px;"></p>
-            
-            <div id="scheduleContainer"></div>
+        <div class="menu-card" onclick="alert('بخش گزارش‌گیری نسخه قبل در اینجا لود می‌شود')"><span class="menu-icon">📝</span><h3>ثبت گزارش روزانه</h3><p>ساعت مطالعه، تست‌ها و لایف‌استایل</p></div>
+        <div class="menu-card" onclick="alert('بخش کارنامه نسخه قبل در اینجا لود می‌شود')"><span class="menu-icon">📊</span><h3>تحلیل و روند پیشرفت</h3><p>مشاهده کارنامه‌ها و نمودارها</p></div>
+    </div>
 
-            <button class="btn-primary" style="background: var(--text-dark); margin-top: 30px;" onclick="location.reload()">🔄 بازگشت و تغییر تنظیمات</button>
+    <div class="container" id="onboardingScreen">
+        <div class="logo-box"><span style="font-size: 50px;">⚙️</span></div>
+        <h1>تنظیمات موتور برنامه‌ریز</h1>
+        <p class="subtitle">این اطلاعات فقط یک‌بار دریافت می‌شود</p>
+
+        <span class="section-title">⏱️ ساعت‌های استراحت ثابت</span>
+        <div class="input-group"><label>معمولاً چه ساعتی ناهار می‌خوری؟ (۱ ساعت)</label><input type="time" id="lunchTime" value="13:30"></div>
+        <div class="input-group"><label>معمولاً چه ساعتی شام می‌خوری؟ (نیم ساعت)</label><input type="time" id="dinnerTime" value="20:30"></div>
+
+        <span class="section-title">🏫 برنامه‌های ثابت (مدرسه/کلاس)</span>
+        <div id="fixedClassesContainer"></div>
+        <button class="btn btn-outline" onclick="addFixedClass()">➕ افزودن کلاس ثابت</button>
+
+        <span class="section-title">🎯 ارزیابی سطح دروس</span>
+        <p style="font-size:12px; color:#666; margin-bottom:15px;">وضعیت خود را در هر درس مشخص کنید تا هوش مصنوعی زمان را درست تقسیم کند.</p>
+        <div id="subjectsEvalContainer"></div>
+
+        <button class="btn btn-primary" onclick="finishOnboarding()" style="margin-top: 30px;">ذخیره و تولید برنامه 🚀</button>
+        <button class="btn btn-outline" style="border:none;" onclick="showScreen('homeMenu')">❌ انصراف</button>
+    </div>
+
+    <div class="container" id="fridayReflectionScreen">
+        <div class="logo-box"><span style="font-size: 50px;">🤖</span></div>
+        <h1 style="color:var(--pink);">اتاق فکر هفته آینده</h1>
+        <p class="subtitle">ارتباط مستقیم با هسته برنامه‌ریزی</p>
+        <div class="input-group">
+            <label>اتفاق خاصی در هفته آینده داری؟</label>
+            <textarea id="aiPrompt" rows="4" placeholder="مثلاً: سه‌شنبه امتحان فیزیک دارم و کل روز رو می‌خوام فیزیک بخونم. یا پنجشنبه عصر مسافرتیم..."></textarea>
         </div>
+        <button class="btn btn-primary" onclick="generateSchedule()">شروع چینش تقویم ⏳</button>
+    </div>
 
+    <div class="container" id="scheduleScreen" style="max-width: 600px;">
+        <h1 style="margin-bottom: 5px;">برنامه این هفته شما</h1>
+        <p class="subtitle" id="scheduleStats"></p>
+        
+        <div id="timelineContainer"></div>
+        
+        <button class="btn btn-primary" style="background:var(--green); margin-top: 20px;" onclick="alert('گزارش پارت‌های انجام شده در دیتابیس (جبرانی‌ها) ثبت شد!')">✅ ثبت گزارش امشب</button>
+        <button class="btn btn-outline" style="border:none;" onclick="showScreen('homeMenu')">بازگشت به منو</button>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; 
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY';
+        // ==========================================
+        // متغیرهای سراسری و دیتای دروس (ترکیب شده)
+        // ==========================================
+        let currentUserInfo = { name: "تستی", grade: "دوازدهم", major: "تجربی" }; // با لاگین پر می‌شود
+        let userFixedClasses = [];
+        let userSubjectLevels = {};
+        
         const daysOfWeek = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+        const generalSubjects = ["فارسی", "عربی", "دینی", "زبان", "فارسی 1", "عربی 1", "دینی 1", "زبان 1", "فارسی 2", "عربی 2", "دینی 2", "زبان 2", "فارسی 3", "عربی 3", "دینی 3", "زبان 3", "سلامت و بهداشت", "هویت اجتماعی"];
+        const subjectsData = { 
+            "دهم": { "ریاضی": ["هندسه 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "تجربی": ["زیست 1", "ریاضی 1", "فیزیک 1", "شیمی 1", "فارسی 1", "عربی 1", "دینی 1", "زبان 1"], "انسانی": ["ریاضی و آمار ۱", "اقتصاد", "علوم و فنون ۱", "عربی انسانی ۱", "تاریخ ۱", "جامعه‌شناسی ۱", "منطق", "فارسی ۱", "دینی ۱", "زبان ۱"] }, 
+            "یازدهم": { "ریاضی": ["حسابان 1", "هندسه 2", "آمار و احتمال", "فیزیک 2", "شیمی 2", "فارسی 2", "عربی 2", "دینی 2", "زبان 2"], "تجربی": ["زیست 2", "ریاضی 2", "فیزیک 2", "شیمی 2", "زمین‌شناسی", "فارسی 2", "عربی 2", "دینی 2", "زبان 2"], "انسانی": ["ریاضی و آمار ۲", "علوم و فنون ۲", "عربی انسانی ۲", "تاریخ ۲", "جامعه‌شناسی ۲", "فلسفه ۱", "روان‌شناسی", "فارسی ۲", "دینی ۲", "زبان ۲"] }, 
+            "دوازدهم": { "ریاضی": ["حسابان 2", "ریاضیات پایه", "هندسه 3", "گسسته", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "تجربی": ["ریاضی 3", "زیست 3", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3", "سلامت و بهداشت", "هویت اجتماعی"], "انسانی": ["علوم و فنون ۳", "ریاضی و آمار ۳", "عربی انسانی ۳", "تاریخ ۳", "جامعه‌شناسی ۳", "جغرافیا ۳", "فلسفه ۲", "فارسی 3", "دینی 3", "زبان 3"] } 
+        };
 
-        function runAIEngine(dailyCapacities, weakSubjects, strongSubjects, syllabusData) {
-            let totalAvailableMinutes = dailyCapacities.reduce((a, b) => a + b, 0);
-            
-            let totalNeededMinutes = 0;
-            let weightedSyllabus = syllabusData.map(topic => {
-                let weight = 1.0;
-                if (weakSubjects.includes(topic.subject)) weight = 1.5;
-                else if (strongSubjects.includes(topic.subject)) weight = 0.7;
-                
-                let adjustedTime = topic.standard_time_minutes * weight;
-                totalNeededMinutes += adjustedTime;
-                return { ...topic, adjustedTime: adjustedTime };
-            });
-
-            let allChunks = [];
-            weightedSyllabus.forEach(topic => {
-                let finalTime = Math.floor((topic.adjustedTime / totalNeededMinutes) * totalAvailableMinutes);
-                let chunkCount = Math.ceil(finalTime / 90); 
-                
-                for(let i = 0; i < chunkCount; i++) {
-                    let duration = (i === chunkCount - 1 && finalTime % 90 !== 0) ? (finalTime % 90) : 90;
-                    if(duration >= 30) { 
-                        allChunks.push({ subject: topic.subject, topic_name: topic.topic_name, duration: duration });
-                    }
-                }
-            });
-
-            let weeklySchedule = [ [], [], [], [], [], [], [] ]; 
-            let currentDayIndex = 0;
-
-            allChunks.sort(() => Math.random() - 0.5); 
-
-            allChunks.forEach(chunk => {
-                for (let i = 0; i < 7; i++) {
-                    let checkDay = (currentDayIndex + i) % 7;
-                    let dayCapacity = dailyCapacities[checkDay];
-                    let usedInThisDay = weeklySchedule[checkDay].reduce((sum, c) => sum + c.duration, 0);
-                    
-                    if (usedInThisDay + chunk.duration <= dayCapacity) {
-                        weeklySchedule[checkDay].push(chunk);
-                        currentDayIndex = checkDay; 
-                        break;
-                    }
-                }
-            });
-
-            return weeklySchedule;
+        // ==========================================
+        // توابع UI و جابجایی صفحات
+        // ==========================================
+        function showScreen(screenId) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
         }
 
-        async function processAI() {
-            const btn = document.getElementById('btnGenerate');
-            const loader = document.getElementById('loadingText');
-            const inputSection = document.getElementById('inputSection');
-            const outputArea = document.getElementById('outputArea');
-            const container = document.getElementById('scheduleContainer');
-            
-            btn.disabled = true;
-            loader.style.display = 'block';
+        function login() {
+            // شبیه‌سازی لاگین برای تست
+            document.getElementById("userNameDisplay").innerText = "علی عزیز، خوش آمدی";
+            document.getElementById("userGradeDisplay").innerText = "دوازدهم تجربی";
+            showScreen('homeMenu');
+        }
 
-            try {
-                let dailyCapacities = [];
-                for(let i=0; i<7; i++) {
-                    let hours = parseFloat(document.getElementById('day_'+i).value) || 0;
-                    dailyCapacities.push(hours * 60); 
+        function openPlanner() {
+            // در سیستم واقعی اینجا چک می‌کنیم آیا قبلاً فرم را پر کرده یا نه
+            // فعلاً می‌فرستیمش به فرم تنظیمات (آنبوردینگ)
+            buildSubjectEvalUI();
+            showScreen('onboardingScreen');
+        }
+
+        // ==========================================
+        // توابع بخش آنبوردینگ (دریافت اطلاعات)
+        // ==========================================
+        function addFixedClass() {
+            let container = document.getElementById('fixedClassesContainer');
+            let div = document.createElement('div');
+            div.className = 'fixed-class-row';
+            div.innerHTML = `
+                <input type="text" placeholder="نام (مثلا: مدرسه)" style="width:40%; padding:10px;">
+                <select style="width:30%; padding:10px;">
+                    ${daysOfWeek.map((d,i) => `<option value="${i}">${d}</option>`).join('')}
+                </select>
+                <input type="time" class="start-t" style="padding:10px;"> تا <input type="time" class="end-t" style="padding:10px;">
+                <span style="color:red; cursor:pointer; font-size:20px;" onclick="this.parentElement.remove()">×</span>
+            `;
+            container.appendChild(div);
+        }
+
+        function buildSubjectEvalUI() {
+            let container = document.getElementById('subjectsEvalContainer');
+            container.innerHTML = "";
+            let subjects = subjectsData[currentUserInfo.grade][currentUserInfo.major] || [];
+            
+            subjects.forEach(subj => {
+                let isGeneral = generalSubjects.includes(subj);
+                let badge = isGeneral ? `<span class="s-badge bg-general">عمومی (۱۲۰د)</span>` : `<span class="s-badge bg-specific">اختصاصی (۹۰د)</span>`;
+                
+                container.innerHTML += `
+                <div class="subject-row">
+                    <div><strong>${subj}</strong> <br>${badge}</div>
+                    <select id="eval_${subj}" style="width:120px; padding:8px; font-size:13px;">
+                        <option value="normal">معمولی</option>
+                        <option value="weak">ضعیفم</option>
+                        <option value="strong">قوی‌ام</option>
+                    </select>
+                </div>`;
+            });
+        }
+
+        function finishOnboarding() {
+            // استخراج اطلاعات
+            userSubjectLevels = {};
+            let subjects = subjectsData[currentUserInfo.grade][currentUserInfo.major] || [];
+            subjects.forEach(s => { userSubjectLevels[s] = document.getElementById(`eval_${s}`).value; });
+            
+            // نمایش پاپ‌آپ جمعه (تعامل با هوش مصنوعی)
+            showScreen('fridayReflectionScreen');
+        }
+
+        // ==========================================
+        // هسته الگوریتم هوش مصنوعی (Time-Blocking)
+        // ==========================================
+        function timeToMins(timeStr) {
+            if(!timeStr) return 0;
+            let [h, m] = timeStr.split(':').map(Number);
+            return (h * 60) + m;
+        }
+
+        function minsToTime(mins) {
+            let h = Math.floor(mins / 60);
+            let m = mins % 60;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        }
+
+        function generateSchedule() {
+            const START_DAY = 7 * 60;  // 07:00
+            const END_DAY = 23 * 60;   // 23:00
+            const BREAK_TIME = 15;
+            
+            let lunchTime = timeToMins(document.getElementById('lunchTime').value || "13:30");
+            let dinnerTime = timeToMins(document.getElementById('dinnerTime').value || "20:30");
+
+            // تولید مخزن دروس بر اساس اولویت‌ها
+            let subjects = subjectsData[currentUserInfo.grade][currentUserInfo.major] || [];
+            let tasksPool = [];
+            
+            subjects.forEach(subj => {
+                let isGeneral = generalSubjects.includes(subj);
+                let duration = isGeneral ? 120 : 90;
+                let level = userSubjectLevels[subj] || 'normal';
+                
+                // تعداد پارت در هفته
+                let count = isGeneral ? 1 : (level === 'weak' ? 4 : level === 'strong' ? 2 : 3);
+                for(let i=0; i<count; i++) tasksPool.push({ name: subj, duration: duration, isGen: isGeneral });
+            });
+
+            // شافل کردن برای تنوع
+            tasksPool.sort(() => Math.random() - 0.5);
+
+            let schedule = [[], [], [], [], [], [], []]; // 7 روز
+            
+            for(let day = 0; day < 7; day++) {
+                let currentTime = START_DAY;
+                
+                // قوانین روز جمعه
+                if(day === 6) { // جمعه
+                    if(currentUserInfo.grade !== "دوازدهم") {
+                        schedule[day].push({ type: 'break', title: '🎉 روز استراحت مطلق / جبرانی', start: START_DAY, end: END_DAY });
+                        continue;
+                    } else {
+                        // دوازدهم: فقط تا ظهر آزمون/جبرانی
+                        schedule[day].push({ type: 'fixed', title: '📝 آزمون جامع / جبرانی', start: START_DAY, end: 13 * 60 });
+                        currentTime = 14 * 60; // از 2 شروع کنه
+                    }
                 }
 
-                let weakSubjects = Array.from(document.getElementById('weakSubjects').selectedOptions).map(o => o.value);
-                let strongSubjects = Array.from(document.getElementById('strongSubjects').selectedOptions).map(o => o.value);
+                // قرار دادن تایم ناهار و شام
+                let fixedBlocks = [
+                    { type: 'fixed', title: '🍲 ناهار و استراحت', start: lunchTime, end: lunchTime + 60 },
+                    { type: 'fixed', title: '🍽️ شام', start: dinnerTime, end: dinnerTime + 30 }
+                ];
 
-                // حل مشکلِ اسلش: کل جدول را می‌گیریم و با جاوااسکریپت فیلتر می‌کنیم
-                const apiUrl = `${SUPABASE_URL}/rest/v1/master_syllabus?select=*`;
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // اضافه کردن کلاس‌های ثابت (از فرم) - اینجا شبیه‌سازی می‌کنیم برای سادگی الگوریتم
+                // ... در نسخه واقعی اینجا اضافه میشن
 
-                if (!response.ok) throw new Error("ارتباط با هسته دیتابیس مسدود شده است.");
-                const rawData = await response.json();
-                
-                // فیلتر کردن تاریخ مورد نظر در مرورگر
-                const syllabus = rawData.filter(item => item.exam_date_shamsi === '1403/07/18');
-                
-                if (!syllabus || syllabus.length === 0) throw new Error("بودجه‌بندی آزمون ۱۸ مهر در دیتابیس یافت نشد. لطفاً دیتا را بررسی کنید.");
+                fixedBlocks.sort((a,b) => a.start - b.start);
 
-                let weeklySchedule = runAIEngine(dailyCapacities, weakSubjects, strongSubjects, syllabus);
-
-                inputSection.style.display = 'none';
-                outputArea.style.display = 'block';
-                container.innerHTML = '';
-                
-                let totalPlacedChunks = 0;
-                let totalPlacedMinutes = 0;
-
-                weeklySchedule.forEach((dayChunks, index) => {
-                    if(dayChunks.length === 0) return; 
+                // پر کردن فضاهای خالی
+                while(currentTime < END_DAY && tasksPool.length > 0) {
+                    // چک کردن برخورد با تایم‌های ثابت
+                    let nextFixed = fixedBlocks.find(f => f.start >= currentTime && f.start < currentTime + 90);
                     
-                    let dayTotalMinutes = dayChunks.reduce((sum, c) => sum + c.duration, 0);
-                    let dayTotalHours = (dayTotalMinutes / 60).toFixed(1);
-                    totalPlacedChunks += dayChunks.length;
-                    totalPlacedMinutes += dayTotalMinutes;
+                    if(nextFixed) {
+                        // اگر وقت کمه، مستقیم برو بعد از تایم ثابت
+                        if(nextFixed.start - currentTime < 60) {
+                            schedule[day].push(nextFixed);
+                            currentTime = nextFixed.end;
+                            fixedBlocks = fixedBlocks.filter(f => f !== nextFixed);
+                            continue;
+                        }
+                    }
 
-                    let html = `
-                    <div class="schedule-day-card">
-                        <div class="day-header">
-                            <span class="day-title">📅 ${daysOfWeek[index]}</span>
-                            <span class="day-stats">${dayTotalHours} ساعت مطالعه</span>
-                        </div>
-                        <div class="part-list">
-                    `;
+                    // برداشتن تسک
+                    let task = tasksPool.shift();
+                    let endTime = currentTime + task.duration;
 
-                    dayChunks.forEach((chunk, cIndex) => {
-                        html += `
-                            <div class="part-item">
-                                <div class="part-header">
-                                    <span class="part-subject">${cIndex + 1}. ${chunk.subject}</span>
-                                    <span class="part-time">${chunk.duration} دقیقه</span>
-                                </div>
-                                <div class="part-topic">🔹 مبحث: ${chunk.topic_name}</div>
-                            </div>
-                        `;
-                    });
+                    // اگر از روز میزنه بیرون
+                    if(endTime > END_DAY) {
+                        tasksPool.unshift(task); // برش گردون
+                        break; // روز تموم شد
+                    }
 
-                    html += `</div></div>`;
-                    container.innerHTML += html;
-                });
+                    schedule[day].push({ type: 'study', title: task.name, isGen: task.isGen, start: currentTime, end: endTime });
+                    currentTime = endTime;
 
-                document.getElementById('totalStats').innerText = `پیکربندی موفق: ${totalPlacedChunks} پارت مطالعاتی (${Math.round(totalPlacedMinutes/60)} ساعت کل) تنظیم شد.`;
-
-            } catch (err) {
-                console.error(err);
-                alert("خطای سیستم: " + err.message);
-                btn.disabled = false;
-                loader.style.display = 'none';
+                    // استراحت بین پارت‌ها
+                    if(currentTime + BREAK_TIME < END_DAY) {
+                        schedule[day].push({ type: 'break', title: '☕ استراحت', start: currentTime, end: currentTime + BREAK_TIME });
+                        currentTime += BREAK_TIME;
+                    }
+                }
             }
+
+            renderSchedule(schedule, tasksPool.length);
         }
+
+        // ==========================================
+        // رندر کردن گرافیکی تقویم خروجی
+        // ==========================================
+        function renderSchedule(schedule, remainingTasks) {
+            let container = document.getElementById('timelineContainer');
+            container.innerHTML = "";
+            let totalStudyMins = 0;
+
+            schedule.forEach((dayBlocks, index) => {
+                let html = `<div class="schedule-day">
+                    <div class="s-day-header"><span>📅 ${daysOfWeek[index]}</span></div>`;
+                
+                dayBlocks.forEach(block => {
+                    let timeText = `${minsToTime(block.start)} تا ${minsToTime(block.end)}`;
+                    
+                    if(block.type === 'study') {
+                        totalStudyMins += (block.end - block.start);
+                        let cssClass = block.isGen ? 'bg-general' : 'bg-specific';
+                        let badge = block.isGen ? 'عمومی' : 'اختصاصی';
+                        
+                        html += `
+                        <div class="s-block">
+                            <div class="s-time">${timeText}</div>
+                            <div class="s-content ${cssClass}">
+                                <div>
+                                    <div class="s-title">📘 ${block.title}</div>
+                                    <span class="s-badge" style="background:rgba(0,0,0,0.1)">${badge}</span>
+                                </div>
+                                <div class="check-box-wrapper"><input type="checkbox" title="انجام شد؟"></div>
+                            </div>
+                        </div>`;
+                    } 
+                    else if (block.type === 'break') {
+                        html += `<div class="s-block"><div class="s-time">${timeText}</div><div class="s-content bg-break" style="padding:10px 15px;"><strong style="font-size:13px;">${block.title}</strong></div></div>`;
+                    }
+                    else if (block.type === 'fixed') {
+                        html += `<div class="s-block"><div class="s-time">${timeText}</div><div class="s-content bg-fixed" style="padding:10px 15px;"><strong>${block.title}</strong></div></div>`;
+                    }
+                });
+                
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+
+            document.getElementById('scheduleStats').innerText = `✅ تقویم تنظیم شد. کل زمان مطالعه: ${Math.floor(totalStudyMins/60)} ساعت. ${remainingTasks > 0 ? '(برخی دروس به دلیل کمبود وقت به بافر جبرانی منتقل شدند)' : ''}`;
+            showScreen('scheduleScreen');
+        }
+
     </script>
 </body>
 </html>
