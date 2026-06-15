@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قطب‌نمای هوشمند راهینو</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root { 
@@ -127,10 +126,10 @@
         <button class="btn btn-outline" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
     </div>
 
-    <div class="container" id="scheduleScreen">
+    <div class="container" id="scheduleScreen" style="max-width: 600px;">
         <h1 id="scheduleTitle" style="color:var(--text-dark);"></h1><p class="subtitle" id="scheduleStats"></p>
         <div id="timelineContainer"></div>
-        <button class="btn btn-primary" style="background:var(--text-dark);" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
+        <button class="btn btn-primary" style="background:var(--text-dark); margin-top:20px;" onclick="showScreen('homeMenu')">🏠 بازگشت به منو</button>
     </div>
 
     <div class="container" id="dateScreen">
@@ -164,20 +163,24 @@
     </div>
 
     <div class="container" id="successScreen">
-        <div class="logo-box">🏆</div><h2 style="text-align:center; margin-bottom: 10px;">گزارش با موفقیت در هسته ثبت شد</h2>
-        <p style="text-align:center; color:#666; font-size:14px;">تحلیل این روز به کارنامه شما اضافه شد.</p>
-        <button class="btn btn-primary" style="margin-top:30px;" onclick="showScreen('homeMenu')">بازگشت به خانه</button>
+        <div class="logo-box">🏆</div><h2 style="text-align:center; margin-bottom: 10px;">گزارش با موفقیت ثبت شد</h2>
+        <p style="text-align:center; color:#666; font-size:14px;">تحلیل این روز به دیتابیس مرکزی اضافه شد.</p>
+        <button class="btn btn-primary" style="margin-top:30px;" onclick="showScreen('homeMenu')">بازگشت به منو</button>
     </div>
 
     <script>
         // ==========================================
-        // 🔗 تنظیمات مرکزی اتصال به دیتابیس و هوش مصنوعی
+        // 🔗 تنظیمات مرکزی (حتماً مقادیر خودت رو اینجا بگذار)
         // ==========================================
-        const SUPABASE_URL = 'https://lajkvzlbvidiradmyowc.supabase.co'; // 👈 لینک سوپابیس شما
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhamt2emxidmlkaXJhZG15b3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjcyNDksImV4cCI6MjA5NzAwMzI0OX0.IB_fVUyK4kejuy88p_R7zn8xdCst9OVRqWBMoo_bNKY'; // 👈 کلید سوپابیس شما
-        const NEW_GAS_AI_URL = 'https://script.google.com/macros/s/AKfycbz_BoUQde5Jj3s5wlygk9QiKPmpEWxeeohwlEmFapkjTrMYJWeb1ac2fNMybnSv6dFO/exec'; // 👈 لینک اسکریپت جدید جمینای
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; // 👈 لینک سوپابیس شما
+        const SUPABASE_KEY = 'YOUR_ANON_KEY'; // 👈 کلید سوپابیس شما
+        const NEW_GAS_AI_URL = 'YOUR_NEW_GOOGLE_SCRIPT_URL_HERE'; // 👈 لینک اسکریپت جدید جمینای
 
-        let currentUser = null; let userSubjectEvals = {}; let courseCount = 0; let selectedDate = "";
+        let currentUser = null; 
+        let userSubjectEvals = {}; 
+        let courseCount = 0; 
+        let selectedDate = "";
+        
         const daysOfWeek = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
         
         const syllabusRef = { 
@@ -186,42 +189,108 @@
             "دوازدهم": { "ریاضی": ["حسابان 2", "ریاضیات پایه", "هندسه 3", "گسسته", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "تجربی": ["ریاضی 3", "زیست 3", "فیزیک 3", "شیمی 3", "فارسی 3", "عربی 3", "دینی 3", "زبان 3"], "انسانی": ["علوم و فنون ۳", "ریاضی و آمار ۳", "عربی انسانی ۳", "تاریخ ۳", "جامعه‌شناسی ۳", "جغرافیا ۳", "فلسفه ۲", "فارسی 3", "دینی 3", "زبان 3"] } 
         };
 
+        // ==========================================
+        // 🛠 توابع کمکی
+        // ==========================================
         async function dbRequest(endpoint, method = 'GET', body = null) {
             let cleanUrl = SUPABASE_URL.endsWith('/') ? SUPABASE_URL.slice(0, -1) : SUPABASE_URL;
-            const options = { method: method, headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }};
+            const options = { 
+                method: method, 
+                headers: { 
+                    'apikey': SUPABASE_KEY, 
+                    'Authorization': `Bearer ${SUPABASE_KEY}`, 
+                    'Content-Type': 'application/json', 
+                    'Prefer': 'return=representation' 
+                }
+            };
             if(body) options.body = JSON.stringify(body);
+            
             try { 
                 const res = await fetch(`${cleanUrl}/rest/v1/${endpoint}`, options); 
-                if(!res.ok) { const txt = await res.text(); alert("🚨 خطا از سوپابیس: " + txt); throw new Error("Supabase Error"); }
+                if(!res.ok) { 
+                    const txt = await res.text(); 
+                    alert("🚨 خطا از سرور: " + txt); 
+                    throw new Error("Supabase Error"); 
+                }
                 return method !== 'DELETE' ? await res.json() : true; 
-            } catch (e) { console.error(e); return null; } 
+            } catch (e) { 
+                console.error("Network Error:", e); 
+                return null; 
+            } 
         }
 
-        function showScreen(id) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0,0); }
-        function formatSliderTime(val) { let h = Math.floor(val); let m = (val % 1 !== 0) ? '30' : '00'; return `${h.toString().padStart(2, '0')}:${m}`; }
-        function updateSliderBadge(slider, badgeId) { document.getElementById(badgeId).innerText = formatSliderTime(slider.value); }
-        function minsToTime(m) { return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0');}`; }
-        function updateTimeLabel(val, labelId) { let h = Math.floor(val); let m = (val - h) * 60; if(h>=24) h-=24; document.getElementById(labelId).innerText = (h<10?'0'+h:h) + ':' + (m===0?'00':'30'); }
-        function setMood(elem, val) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); elem.classList.add('active'); document.getElementById("life_mood").value = val; }
-        function getWeekName() { let d = new Date(); let diff = (d.getDay() + 1) % 7; d.setDate(d.getDate() - diff - 1); return `برنامه هفته (از ${new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d)})`; }
+        function showScreen(id) { 
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active-screen')); 
+            document.getElementById(id).classList.add('active-screen'); 
+            window.scrollTo(0,0); 
+        }
+        
+        function formatSliderTime(val) { 
+            let h = Math.floor(val); 
+            let m = (val % 1 !== 0) ? '30' : '00'; 
+            return `${h.toString().padStart(2, '0')}:${m}`; 
+        }
+        
+        function updateSliderBadge(slider, badgeId) { 
+            document.getElementById(badgeId).innerText = formatSliderTime(slider.value); 
+        }
+        
+        // 🌟 این تابع همون تابعی هست که باگ نقطه‌ویرگول داشت و الان ۱۰۰٪ سالمه
+        function minsToTime(m) { 
+            return `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`; 
+        }
+        
+        function updateTimeLabel(val, labelId) { 
+            let h = Math.floor(val); 
+            let m = (val - h) * 60; 
+            if(h >= 24) h -= 24; 
+            document.getElementById(labelId).innerText = (h < 10 ? '0'+h : h) + ':' + (m === 0 ? '00' : '30'); 
+        }
+        
+        function setMood(elem, val) { 
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); 
+            elem.classList.add('active'); 
+            document.getElementById("life_mood").value = val; 
+        }
+        
+        function getWeekName() { 
+            let d = new Date(); 
+            let diff = (d.getDay() + 1) % 7; 
+            d.setDate(d.getDate() - diff - 1); 
+            return `برنامه هفته (از ${new Intl.DateTimeFormat('fa-IR', {month: 'long', day: 'numeric'}).format(d)})`; 
+        }
 
         // ==========================================
-        // 🚪 فرآیند لاگین خطایاب
+        // 🚪 فرآیند لاگین خطایاب (نسخه نهایی)
         // ==========================================
         async function handleLogin() {
-            let id = document.getElementById("userId").value.trim(); let pass = document.getElementById("userPass").value.trim();
+            let id = document.getElementById("userId").value.trim(); 
+            let pass = document.getElementById("userPass").value.trim();
+            
             if(!id || !pass) return alert("لطفاً فیلدها را پر کنید.");
-            document.getElementById("loginBtn").disabled = true; document.getElementById("loginLoader").style.display = "block";
+            
+            document.getElementById("loginBtn").disabled = true; 
+            document.getElementById("loginLoader").style.display = "block";
+            
             let users = await dbRequest(`students?chat_id=eq.${id}&select=*`);
-            if (users === null) alert("❌ ارتباط با دیتابیس برقرار نشد. لینک یا اینترنت را چک کنید.");
-            else if (users.length === 0) alert("⚠️ آیدی عددی شما در دیتابیس جدید یافت نشد!");
-            else if(users.length > 0) {
+            
+            if (users === null) {
+                alert("❌ ارتباط با دیتابیس برقرار نشد. لطفاً اینترنت یا فیلترشکن خود را چک کنید.");
+            } else if (users.length === 0) {
+                alert("⚠️ کاربری با آیدی " + id + " یافت نشد.");
+            } else if (users.length > 0) {
                 if (users[0].password === pass) {
-                    currentUser = users[0]; document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
-                    document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; showScreen('homeMenu');
-                } else alert("🔑 رمز عبور اشتباه است.");
+                    currentUser = users[0]; 
+                    document.getElementById("userNameDisplay").innerText = `${currentUser.full_name.split(' ')[0]} عزیز، خوش آمدی`;
+                    document.getElementById("userGradeDisplay").innerText = `${currentUser.grade} ${currentUser.major}`; 
+                    showScreen('homeMenu');
+                } else {
+                    alert("🔑 رمز عبور اشتباه است.");
+                }
             }
-            document.getElementById("loginBtn").disabled = false; document.getElementById("loginLoader").style.display = "none";
+            
+            document.getElementById("loginBtn").disabled = false; 
+            document.getElementById("loginLoader").style.display = "none";
         }
 
         // ==========================================
@@ -230,112 +299,266 @@
         async function initPlannerSequence() {
             let weekName = getWeekName();
             let schedules = await dbRequest(`weekly_schedules?student_id=eq.${currentUser.id}&week_name=eq.${encodeURIComponent(weekName)}&select=*`);
+            
             if(schedules && schedules.length > 0) {
-                if(schedules[0].status === 'در انتظار') return showScreen('pendingApprovalScreen');
-                if(schedules[0].status === 'تایید شده') {
+                let currentSch = schedules[0];
+                if(currentSch.status === 'در انتظار') return showScreen('pendingApprovalScreen');
+                
+                if(currentSch.status === 'تایید شده') {
                     document.getElementById("scheduleTitle").innerText = weekName;
                     let aiMsg = "", summary = "";
-                    try { let p = JSON.parse(schedules[0].ai_feedback); aiMsg = p.msg; summary = p.sum; } catch(e) { aiMsg = schedules[0].ai_feedback; }
-                    return renderTimeline(schedules[0].schedule_json, aiMsg, summary);
+                    try { 
+                        let p = JSON.parse(currentSch.ai_feedback || "{}"); 
+                        aiMsg = p.msg; 
+                        summary = p.sum; 
+                    } catch(e) { 
+                        aiMsg = currentSch.ai_feedback; 
+                    }
+                    return renderTimeline(currentSch.schedule_json, aiMsg, summary);
                 }
             }
+            
             let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`);
-            if(evals && evals.length > 0) { document.getElementById("weekNameDisplay").innerText = weekName; showScreen('fridayReflectionScreen'); } 
-            else { buildOnboardingUI(); showScreen('onboardingScreen'); }
+            if(evals && evals.length > 0) { 
+                document.getElementById("weekNameDisplay").innerText = weekName; 
+                showScreen('fridayReflectionScreen'); 
+            } else { 
+                buildOnboardingUI(); 
+                showScreen('onboardingScreen'); 
+            }
         }
 
         function buildOnboardingUI() {
-            let subjects = syllabusRef[currentUser.grade][currentUser.major] || ["عمومی"]; let container = document.getElementById('subjectsEvalContainer'); container.innerHTML = ""; userSubjectEvals = {};
-            subjects.forEach(subj => { userSubjectEvals[subj] = "normal"; container.innerHTML += `<div class="eval-row"><span class="eval-subj-name">${subj}</span><div class="btn-group"><button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button><button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button><button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button></div></div>`; });
+            let subjects = syllabusRef[currentUser.grade][currentUser.major] || ["عمومی"]; 
+            let container = document.getElementById('subjectsEvalContainer'); 
+            container.innerHTML = ""; 
+            userSubjectEvals = {};
+            
+            subjects.forEach(subj => { 
+                userSubjectEvals[subj] = "normal"; 
+                container.innerHTML += `
+                <div class="eval-row">
+                    <span class="eval-subj-name">${subj}</span>
+                    <div class="btn-group">
+                        <button class="btn-eval" data-subj="${subj}" data-val="weak" onclick="setEval(this)">ضعیفم</button>
+                        <button class="btn-eval active" data-subj="${subj}" data-val="normal" onclick="setEval(this)">معمولی</button>
+                        <button class="btn-eval" data-subj="${subj}" data-val="strong" onclick="setEval(this)">قوی‌ام</button>
+                    </div>
+                </div>`; 
+            });
         }
-        function setEval(btn) { let subj = btn.getAttribute('data-subj'); userSubjectEvals[subj] = btn.getAttribute('data-val'); btn.parentElement.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        
+        function setEval(btn) { 
+            let subj = btn.getAttribute('data-subj'); 
+            userSubjectEvals[subj] = btn.getAttribute('data-val'); 
+            btn.parentElement.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('active')); 
+            btn.classList.add('active'); 
+        }
+        
         function addFixedClassUI() {
-            let id = Date.now(); document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', `<div class="fixed-class-box" id="fc_${id}"><button class="btn-danger" onclick="document.getElementById('fc_${id}').remove()">حذف</button><div class="input-group" style="margin-top:20px; margin-bottom:15px;"><input type="text" class="fc-name" placeholder="نام کلاس (مثلاً دبیرستان)"></div><div class="days-wrapper">${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}</div><div style="display:flex; gap:10px;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge">16:00</div><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge">18:00</div></div></div>`);
+            let id = Date.now(); 
+            document.getElementById('fixedClassesContainer').insertAdjacentHTML('beforeend', `
+            <div class="fixed-class-box" id="fc_${id}">
+                <button class="btn-danger" style="position:absolute;top:10px;left:10px;" onclick="document.getElementById('fc_${id}').remove()">حذف</button>
+                <div class="input-group" style="margin-top:20px; margin-bottom:15px;">
+                    <input type="text" class="fc-name" placeholder="نام کلاس (مثلاً کلاس فیزیک)">
+                </div>
+                <div class="days-wrapper">
+                    ${daysOfWeek.map((d,i) => `<div class="day-circle fc-day" data-val="${i}" onclick="this.classList.toggle('selected')">${d[0]}</div>`).join('')}
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;"><input type="range" class="fc-start-s" min="7" max="22" step="0.5" value="16" oninput="updateSliderBadge(this, 'b_s_${id}')"><div id="b_s_${id}" class="time-badge" style="text-align:center;">16:00</div></div>
+                    <div style="flex:1;"><input type="range" class="fc-end-s" min="8" max="23" step="0.5" value="18" oninput="updateSliderBadge(this, 'b_e_${id}')"><div id="b_e_${id}" class="time-badge" style="text-align:center; background:var(--pink-light); color:var(--pink);">18:00</div></div>
+                </div>
+            </div>`);
         }
 
         async function saveOnboardingData() {
-            document.getElementById("btnSaveOnboarding").disabled = true; document.getElementById("onboardingLoader").style.display = "block";
-            let lunch = formatSliderTime(document.getElementById('sliderLunch').value); let dinner = formatSliderTime(document.getElementById('sliderDinner').value);
-            await dbRequest(`students?id=eq.${currentUser.id}`, 'PATCH', { lunch_time: lunch, dinner_time: dinner }); currentUser.lunch_time = lunch; currentUser.dinner_time = dinner;
-            let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] })); await dbRequest('subject_evaluations', 'POST', evalsPayload);
-            let classes = []; document.querySelectorAll('.fixed-class-box').forEach(box => { let name = box.querySelector('.fc-name').value; let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val'))); if(name && days.length > 0) classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: formatSliderTime(box.querySelector('.fc-start-s').value), end_time: formatSliderTime(box.querySelector('.fc-end-s').value) }); });
+            document.getElementById("btnSaveOnboarding").disabled = true; 
+            document.getElementById("onboardingLoader").style.display = "block";
+            
+            let lunch = formatSliderTime(document.getElementById('sliderLunch').value); 
+            let dinner = formatSliderTime(document.getElementById('sliderDinner').value);
+            
+            await dbRequest(`students?id=eq.${currentUser.id}`, 'PATCH', { lunch_time: lunch, dinner_time: dinner }); 
+            currentUser.lunch_time = lunch; currentUser.dinner_time = dinner;
+            
+            let evalsPayload = Object.keys(userSubjectEvals).map(s => ({ student_id: currentUser.id, subject_name: s, eval_level: userSubjectEvals[s] })); 
+            await dbRequest('subject_evaluations', 'POST', evalsPayload);
+            
+            let classes = []; 
+            document.querySelectorAll('.fixed-class-box').forEach(box => { 
+                let name = box.querySelector('.fc-name').value; 
+                let days = Array.from(box.querySelectorAll('.fc-day.selected')).map(el => parseInt(el.getAttribute('data-val'))); 
+                if(name && days.length > 0) {
+                    classes.push({ student_id: currentUser.id, class_name: name, days_of_week: days, start_time: formatSliderTime(box.querySelector('.fc-start-s').value), end_time: formatSliderTime(box.querySelector('.fc-end-s').value) }); 
+                }
+            });
             if(classes.length > 0) await dbRequest('fixed_classes', 'POST', classes);
-            document.getElementById("weekNameDisplay").innerText = getWeekName(); showScreen('fridayReflectionScreen'); document.getElementById("btnSaveOnboarding").disabled = false; document.getElementById("onboardingLoader").style.display = "none";
+            
+            document.getElementById("weekNameDisplay").innerText = getWeekName(); 
+            showScreen('fridayReflectionScreen'); 
+            
+            document.getElementById("btnSaveOnboarding").disabled = false; 
+            document.getElementById("onboardingLoader").style.display = "none";
         }
 
         async function triggerAIGeneration() {
-            let btn = document.getElementById("btnGenerateAI"); let loader = document.getElementById("aiLoader"); btn.disabled = true; loader.style.display = "block";
+            let btn = document.getElementById("btnGenerateAI"); 
+            let loader = document.getElementById("aiLoader"); 
+            btn.disabled = true; loader.style.display = "block";
+            
             try {
-                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || []; let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || []; let syllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
-                let payload = { grade: currentUser.grade, major: currentUser.major, lunchTime: currentUser.lunch_time, dinnerTime: currentUser.dinner_time, evals: evals, fixedClasses: fixedClasses, reflection: document.getElementById("aiPromptText").value, syllabus: syllabus };
-                const res = await fetch(NEW_GAS_AI_URL, { method: 'POST', body: JSON.stringify({ data: payload }), redirect: "follow" }); const aiData = await res.json();
+                let fixedClasses = await dbRequest(`fixed_classes?student_id=eq.${currentUser.id}&select=*`) || []; 
+                let evals = await dbRequest(`subject_evaluations?student_id=eq.${currentUser.id}&select=*`) || []; 
+                let syllabus = await dbRequest(`master_syllabus?target_grade=eq.${currentUser.grade}&select=*`) || [];
+                let reflection = document.getElementById("aiPromptText").value.trim();
+                
+                let payload = { grade: currentUser.grade, major: currentUser.major, lunchTime: currentUser.lunch_time, dinnerTime: currentUser.dinner_time, evals: evals, fixedClasses: fixedClasses, reflection: reflection, syllabus: syllabus };
+                
+                const res = await fetch(NEW_GAS_AI_URL, { method: 'POST', body: JSON.stringify({ data: payload }), redirect: "follow" }); 
+                const aiData = await res.json();
+                
                 if(aiData.status !== "Success") throw new Error(aiData.message);
-                await dbRequest('weekly_schedules', 'POST', [{ student_id: currentUser.id, week_name: getWeekName(), student_reflection: payload.reflection, ai_feedback: JSON.stringify({ msg: aiData.result.aiMessage, sum: aiData.result.generalSummary }), schedule_json: aiData.result.schedule, status: 'در انتظار' }]);
+                
+                await dbRequest('weekly_schedules', 'POST', [{ 
+                    student_id: currentUser.id, 
+                    week_name: getWeekName(), 
+                    student_reflection: reflection, 
+                    ai_feedback: JSON.stringify({ msg: aiData.result.aiMessage, sum: aiData.result.generalSummary }), 
+                    schedule_json: aiData.result.schedule, 
+                    status: 'در انتظار' 
+                }]);
+                
                 showScreen('pendingApprovalScreen');
-            } catch(e) { alert("خطا در پردازش هوش مصنوعی: " + e.message); }
+            } catch(e) { 
+                alert("خطا در ارتباط با هوش مصنوعی: " + e.message); 
+            }
+            
             btn.disabled = false; loader.style.display = "none";
         }
 
         function renderTimeline(schedule, msg, sum) {
-            let container = document.getElementById('timelineContainer'); container.innerHTML = ""; let totalMins = 0;
-            if(msg) container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; font-size:13px; line-height:1.8;"><strong>💬 پیام انگیزشی مشاور:</strong><br>${msg}</div>`;
+            let container = document.getElementById('timelineContainer'); 
+            container.innerHTML = ""; 
+            let totalMins = 0;
+            
+            if(msg) container.innerHTML += `<div style="background:#fffdf5; border:2px dashed var(--yellow); padding:15px; border-radius:16px; margin-bottom:15px; font-size:13px; line-height:1.8;"><strong>💬 پیام مشاور:</strong><br>${msg}</div>`;
             if(sum) container.innerHTML += `<div style="background:#e3f2fd; border:2px solid var(--blue); padding:15px; border-radius:16px; margin-bottom:20px; font-size:13px; line-height:1.8;"><strong>📊 استراتژی کلی این هفته:</strong><br>${sum}</div>`;
+            
             schedule.forEach((day, i) => { 
                 let html = `<div class="schedule-day"><div class="s-day-header"><span>📅 ${daysOfWeek[i]}</span></div>`; 
                 day.forEach(b => { 
                     let css = b.type === 'study' ? (b.isGen ? 'bg-general' : 'bg-specific') : (b.type === 'break' ? 'bg-break' : 'bg-fixed'); 
                     if(b.type === 'study') totalMins += (b.end - b.start);
-                    let det = b.topic ? `<div class="s-details">مبحث: ${b.topic} | 🎯 تارگت: ${b.tests || 0} تست</div>` : "";
+                    let det = b.topic ? `<div class="s-details">مبحث: ${b.topic} <br> 🎯 هدف‌گذاری: ${b.tests || 0} تست</div>` : "";
                     html += `<div class="s-block"><div class="s-time">${minsToTime(b.start)} تا ${minsToTime(b.end)}</div><div class="s-content ${css}"><div class="s-title">${b.title}</div>${det}</div></div>`; 
                 }); 
-                html += `</div>`; container.innerHTML += html; 
+                html += `</div>`; 
+                container.innerHTML += html; 
             });
-            document.getElementById('scheduleStats').innerText = `زمان مطالعه خالص کل هفته: ${Math.floor(totalMins/60)} ساعت`; showScreen('scheduleScreen');
+            
+            document.getElementById('scheduleStats').innerText = `زمان مطالعه خالص تقویم: ${Math.floor(totalMins/60)} ساعت`; 
+            showScreen('scheduleScreen');
         }
 
         // ==========================================
         // 📝 ثبت گزارش شبانه هوشمند
         // ==========================================
         function openDateScreen() {
-            let select = document.getElementById("dateSelect"); select.innerHTML = ""; let labels = ["امروز", "دیروز", "پریروز", "۳ روز پیش", "۴ روز پیش", "۵ روز پیش", "۶ روز پیش"];
-            for(let i=0; i<7; i++) { let d = new Date(); d.setDate(d.getDate() - i); let shamsi = new Intl.DateTimeFormat('fa-IR', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); let opt = document.createElement("option"); opt.value = shamsi; opt.text = `${labels[i]} (${shamsi})`; if(i===0) opt.selected = true; select.appendChild(opt); }
+            let select = document.getElementById("dateSelect"); 
+            select.innerHTML = ""; 
+            let labels = ["امروز", "دیروز", "پریروز", "۳ روز پیش", "۴ روز پیش", "۵ روز پیش", "۶ روز پیش"];
+            
+            for(let i=0; i<7; i++) { 
+                let d = new Date(); 
+                d.setDate(d.getDate() - i); 
+                let shamsi = new Intl.DateTimeFormat('fa-IR', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); 
+                let opt = document.createElement("option"); 
+                opt.value = shamsi; 
+                opt.text = `${labels[i]} (${shamsi})`; 
+                if(i===0) opt.selected = true; 
+                select.appendChild(opt); 
+            }
             showScreen('dateScreen');
         }
 
         async function checkDate() {
-            selectedDate = document.getElementById("dateSelect").value; document.getElementById("dateBtn").disabled = true;
+            selectedDate = document.getElementById("dateSelect").value; 
+            document.getElementById("dateBtn").disabled = true;
+            
             let exists = await dbRequest(`daily_reports?student_id=eq.${currentUser.id}&report_date_shamsi=eq.${encodeURIComponent(selectedDate)}&select=id`);
             document.getElementById("dateBtn").disabled = false;
+            
             if(exists && exists.length > 0) return alert("شما قبلاً برای این تاریخ گزارش ثبت کرده‌اید!");
+            
             document.getElementById("dashDateText").innerText = "تاریخ گزارش: " + selectedDate;
-            document.getElementById("courseContainer").innerHTML = ""; courseCount = 0; addCourseRow(); showScreen('dashboard');
+            document.getElementById("courseContainer").innerHTML = ""; 
+            courseCount = 0; 
+            addCourseRow(); 
+            showScreen('dashboard');
         }
 
         function addCourseRow() {
-            courseCount++; let div = document.createElement("div"); div.className = "course-box"; div.id = "course_" + courseCount;
+            courseCount++; 
+            let div = document.createElement("div"); 
+            div.className = "course-box"; 
+            div.id = "course_" + courseCount;
+            
             let opts = (syllabusRef[currentUser.grade][currentUser.major] || []).map(s => `<option value="${s}">${s}</option>`).join('');
-            div.innerHTML = `<button class="btn-danger" style="position:absolute; top:10px; left:10px;" onclick="document.getElementById('${div.id}').remove()">حذف</button><div class="input-group" style="margin-top:20px;"><label>نام درس:</label><select class="c-name">${opts}</select></div><div class="slider-header"><label>ساعت آموزش <span class="val-badge" id="v_edu_${courseCount}">0</span></label></div><input type="range" class="c-edu" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_edu_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>ساعت مطالعه خالص <span class="val-badge" id="v_std_${courseCount}">0</span></label></div><input type="range" class="c-std" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_std_${courseCount}').innerText = this.value"><div class="slider-header" style="margin-top:15px;"><label>تعداد تست <span class="val-badge" id="v_tst_${courseCount}">0</span></label></div><input type="range" class="c-tst" min="0" max="300" step="5" value="0" oninput="document.getElementById('v_tst_${courseCount}').innerText = this.value">`;
+            
+            div.innerHTML = `
+            <button class="btn-danger" style="position:absolute; top:10px; left:10px;" onclick="document.getElementById('${div.id}').remove()">حذف</button>
+            <div class="input-group" style="margin-top:20px;">
+                <label>نام درس:</label>
+                <select class="c-name">${opts}</select>
+            </div>
+            <div class="slider-header"><label>ساعت آموزش <span class="val-badge" id="v_edu_${courseCount}">0</span></label></div>
+            <input type="range" class="c-edu" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_edu_${courseCount}').innerText = this.value">
+            <div class="slider-header" style="margin-top:15px;"><label>ساعت مطالعه خالص <span class="val-badge" id="v_std_${courseCount}">0</span></label></div>
+            <input type="range" class="c-std" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('v_std_${courseCount}').innerText = this.value">
+            <div class="slider-header" style="margin-top:15px;"><label>تعداد تست <span class="val-badge" id="v_tst_${courseCount}">0</span></label></div>
+            <input type="range" class="c-tst" min="0" max="300" step="5" value="0" oninput="document.getElementById('v_tst_${courseCount}').innerText = this.value">`;
+            
             document.getElementById("courseContainer").appendChild(div);
         }
 
         async function submitDailyReport() {
-            let btn = document.getElementById("submitReportBtn"); btn.disabled = true; btn.innerText = "در حال ارسال به هسته...";
+            let btn = document.getElementById("submitReportBtn"); 
+            btn.disabled = true; 
+            btn.innerText = "در حال ارسال به دیتابیس...";
+            
             try {
                 let courses = [];
                 document.querySelectorAll(".course-box").forEach(box => {
-                    let edu = parseFloat(box.querySelector(".c-edu").value) || 0; let std = parseFloat(box.querySelector(".c-std").value) || 0; let tst = parseInt(box.querySelector(".c-tst").value) || 0;
-                    if(edu>0 || std>0 || tst>0) courses.push({ name: box.querySelector(".c-name").value, edu: edu, study: std, tests: tst });
+                    let edu = parseFloat(box.querySelector(".c-edu").value) || 0; 
+                    let std = parseFloat(box.querySelector(".c-std").value) || 0; 
+                    let tst = parseInt(box.querySelector(".c-tst").value) || 0;
+                    if(edu>0 || std>0 || tst>0) {
+                        courses.push({ name: box.querySelector(".c-name").value, edu: edu, study: std, tests: tst });
+                    }
                 });
+                
                 if(courses.length === 0) throw new Error("حداقل اطلاعات یک درس را برای ارسال وارد کنید.");
                 
                 await dbRequest('daily_reports', 'POST', [{
-                    student_id: currentUser.id, report_date_shamsi: selectedDate, courses_data: courses,
-                    sleep_last_night: document.getElementById("v_sleepLast").innerText, wake_today: document.getElementById("v_wakeToday").innerText,
-                    nap_hours: parseFloat(document.getElementById("v_nap").innerText) || 0, phone_hours: parseFloat(document.getElementById("v_phone").innerText) || 0, mood: document.getElementById("life_mood").value
+                    student_id: currentUser.id, 
+                    report_date_shamsi: selectedDate, 
+                    courses_data: courses,
+                    sleep_last_night: document.getElementById("v_sleepLast").innerText, 
+                    wake_today: document.getElementById("v_wakeToday").innerText,
+                    nap_hours: parseFloat(document.getElementById("v_nap").innerText) || 0, 
+                    phone_hours: parseFloat(document.getElementById("v_phone").innerText) || 0, 
+                    mood: document.getElementById("life_mood").value
                 }]);
+                
                 showScreen('successScreen');
-            } catch(e) { alert("خطا: " + e.message); }
-            btn.disabled = false; btn.innerText = "🚀 ثبت نهایی در هسته";
+            } catch(e) { 
+                alert("خطا: " + e.message); 
+            }
+            
+            btn.disabled = false; 
+            btn.innerText = "🚀 ثبت و ارسال نهایی گزارش";
         }
     </script>
 </body>
